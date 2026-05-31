@@ -1,0 +1,22 @@
+{
+  "universe_usage_history": [
+    {
+      "universe": "Ocean's Eleven",
+      "assignment_id": "pulse-2026-05-31-oceans-eleven",
+      "used_at": "2026-05-31T21:31:45Z"
+    }
+  ],
+  "assignment_cast_snapshots": {
+    "pulse-2026-05-31-oceans-eleven": {
+      "universe": "Ocean's Eleven",
+      "agents": {
+        "lead": "Rusty",
+        "frontend": "Linus",
+        "pipeline-devops": "Basher",
+        "data-ai": "Livingston",
+        "tester": "Yen"
+      },
+      "created_at": "2026-05-31T21:31:45Z"
+    }
+  }
+}

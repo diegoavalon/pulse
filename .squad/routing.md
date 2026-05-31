@@ -4,15 +4,17 @@ How to decide who handles what.
 
 ## Routing Table
 
-| Work Type          | Route To | Examples                                        |
-| ------------------ | -------- | ----------------------------------------------- |
-| {domain 1}         | {Name}   | {example tasks}                                 |
-| {domain 2}         | {Name}   | {example tasks}                                 |
-| {domain 3}         | {Name}   | {example tasks}                                 |
-| Code review        | {Name}   | Review PRs, check quality, suggest improvements |
-| Testing            | {Name}   | Write tests, find edge cases, verify fixes      |
-| Scope & priorities | {Name}   | What to build next, trade-offs, decisions       |
-| Session logging    | Scribe   | Automatic — never needs routing                 |
+| Work Type                          | Route To   | Examples                                                                     |
+| ---------------------------------- | ---------- | ---------------------------------------------------------------------------- |
+| Scope, architecture, sequencing    | Rusty      | MVP slicing, trade-offs, reviewer gates, cross-domain decisions              |
+| SvelteKit dashboard UI             | Linus      | Scorecards, page detail views, Chart.js trends, Tailwind token usage         |
+| Collection and deployment pipeline | Basher     | GitHub Actions, sitespeed.io Docker, matrix collection, private Pages deploy |
+| Data extraction and AI review      | Livingston | `summary.json`, `detail.json`, retention rules, Claude review workflow       |
+| Tests and quality gates            | Yen        | Unit tests, edge cases, workflow validation, regression checks               |
+| Code review                        | Rusty      | Review PRs, check quality, enforce brief decisions                           |
+| Testing review                     | Yen        | Approve/reject test coverage and behavior validation                         |
+| Session logging                    | Scribe     | Automatic — never needs routing                                              |
+| Work monitoring                    | Ralph      | Backlog scans, issue pickup, keep-alive checks                               |
 
 ## Issue Routing
 
@@ -20,6 +22,16 @@ How to decide who handles what.
 | -------------- | ---------------------------------------------------- | ------------ |
 | `squad`        | Triage: analyze issue, assign `squad:{member}` label | Lead         |
 | `squad:{name}` | Pick up issue and complete the work                  | Named member |
+
+## Member Labels
+
+| Label              | Member     |
+| ------------------ | ---------- |
+| `squad:rusty`      | Rusty      |
+| `squad:linus`      | Linus      |
+| `squad:basher`     | Basher     |
+| `squad:livingston` | Livingston |
+| `squad:yen`        | Yen        |
 
 ### How Issue Assignment Works
 
