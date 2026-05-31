@@ -1,3 +1,169 @@
+---
+version: alpha
+name: Pulse
+description: >-
+  The visual identity of Pulse, the Core Web Vitals dashboard —
+  a warm, editorial system pairing a cream paper canvas with a serif display
+  voice, an olive-lime accent, and soft pill-shaped controls.
+colors:
+  primary: "#b2c248" # Olive — brand accent, links, active states
+  primary-bright: "#b2c248" # Lime — highlight wash, "dancing bars", chips
+  ink: "#292929" # Near-black — body ink and primary (dark) buttons
+  surface: "#f7f7f2" # Cream paper — dominant page background
+  surface-elevated: "#ffffff" # White — cards, inputs, raised panels
+  surface-sunken: "#f2f2ec" # Faint warm gray — recessed wells
+  on-surface: "#292929" # Primary text on cream / white
+  secondary: "#72726e" # Muted warm gray — secondary text, lead copy
+  neutral: "#acada8" # Soft taupe — tertiary text, placeholders, icons
+  border: "#d5d5d2" # Hairline dividers and control outlines
+  accent-tint: "#f2f6e1" # Pale green wash — accent surfaces, callouts
+  warning: "#febe29" # Amber — sparing highlight / status accent
+  danger: "#e95d3d" # Warm red — destructive actions, errors
+typography:
+  display:
+    fontFamily: "'Poppins', sans-serif"
+    fontSize: 68px
+    fontWeight: 400
+    lineHeight: 1.0
+    letterSpacing: -1.02px
+  headline-lg:
+    fontFamily: "'Poppins', sans-serif"
+    fontSize: 48px
+    fontWeight: 400
+    lineHeight: 1.0
+    letterSpacing: -0.72px
+  headline-md:
+    fontFamily: "'Poppins', sans-serif"
+    fontSize: 36px
+    fontWeight: 400
+    lineHeight: 1.1
+    letterSpacing: -0.54px
+  headline-sm:
+    fontFamily: "'Poppins', sans-serif"
+    fontSize: 20px
+    fontWeight: 400
+    lineHeight: 1.4
+    letterSpacing: -0.3px
+  lead:
+    fontFamily: "'Open Sans', system-ui, sans-serif"
+    fontSize: 24px
+    fontWeight: 300
+    lineHeight: 1.33
+    letterSpacing: 0.24px
+  body-lg:
+    fontFamily: "'Open Sans', system-ui, sans-serif"
+    fontSize: 16px
+    fontWeight: 400
+    lineHeight: 1.5
+  body-md:
+    fontFamily: "'Open Sans', system-ui, sans-serif"
+    fontSize: 15px
+    fontWeight: 400
+    lineHeight: 1.33
+  body-sm:
+    fontFamily: "'Open Sans', system-ui, sans-serif"
+    fontSize: 14px
+    fontWeight: 400
+    lineHeight: 1.43
+  label-sm:
+    fontFamily: "'Open Sans', system-ui, sans-serif"
+    fontSize: 13px
+    fontWeight: 500
+    lineHeight: 1.23
+    letterSpacing: 0.13px
+rounded:
+  sm: 4px
+  md: 8px
+  lg: 12px
+  xl: 16px
+  full: 9999px
+spacing:
+  xs: 4px
+  sm: 8px
+  md: 12px
+  lg: 16px
+  xl: 24px
+  xxl: 32px
+  section: 48px
+  section-lg: 80px
+components:
+  button-primary:
+    backgroundColor: "{colors.ink}"
+    textColor: "#fcfcf8"
+    typography: "{typography.label-sm}"
+    rounded: "{rounded.full}"
+    padding: 10px 20px
+    height: 36px
+  button-primary-hover:
+    backgroundColor: "#4e4d4b"
+    textColor: "#fcfcf8"
+  button-secondary:
+    backgroundColor: "{colors.surface-elevated}"
+    textColor: "{colors.ink}"
+    typography: "{typography.label-sm}"
+    rounded: "{rounded.full}"
+    padding: 8px 16px
+    height: 36px
+  button-accent:
+    backgroundColor: "{colors.primary}"
+    textColor: "{colors.ink}"
+    typography: "{typography.label-sm}"
+    rounded: "{rounded.full}"
+    padding: 10px 20px
+    height: 36px
+  chip:
+    backgroundColor: "{colors.accent-tint}"
+    textColor: "{colors.ink}"
+    typography: "{typography.label-sm}"
+    rounded: "{rounded.full}"
+    padding: 6px 12px
+  input:
+    backgroundColor: "{colors.surface-elevated}"
+    textColor: "{colors.ink}"
+    typography: "{typography.body-lg}"
+    rounded: "{rounded.md}"
+    padding: 10px 16px
+  card:
+    backgroundColor: "{colors.surface-elevated}"
+    textColor: "{colors.ink}"
+    rounded: "{rounded.lg}"
+    padding: 16px
+  nav:
+    backgroundColor: "{colors.surface-elevated}"
+    textColor: "{colors.ink}"
+    typography: "{typography.body-lg}"
+    rounded: "{rounded.full}"
+    padding: 0 8px
+    height: 56px
+  divider:
+    backgroundColor: "{colors.border}"
+    height: 1px
+    width: 100%
+  panel-sunken:
+    backgroundColor: "{colors.surface-sunken}"
+    textColor: "{colors.ink}"
+    rounded: "{rounded.lg}"
+    padding: 16px
+  text-muted:
+    backgroundColor: "{colors.neutral}"
+    textColor: "{colors.ink}"
+    typography: "{typography.body-sm}"
+    rounded: "{rounded.sm}"
+    padding: 4px 8px
+  status-warning:
+    backgroundColor: "{colors.warning}"
+    textColor: "{colors.ink}"
+    typography: "{typography.label-sm}"
+    rounded: "{rounded.full}"
+    padding: 6px 12px
+  status-danger:
+    backgroundColor: "{colors.danger}"
+    textColor: "#000000"
+    typography: "{typography.label-sm}"
+    rounded: "{rounded.full}"
+    padding: 6px 12px
+---
+
 # Pulse Design System
 
 ## Overview
@@ -14,7 +180,7 @@ The personality is **editorial and technical**. The scorecard leads with clear
 green/yellow/red signal; diagnostics and trend charts layer underneath for
 developers who need the full depth. Color is used sparingly and with intent:
 most of the interface is ink-on-cream, and a single **olive-lime accent**
-(`primary` `#5b6f00`, brightening to `primary-bright` `#b2c248`) signals
+(`primary` `#b2c248`, brightening to `primary-bright` `#b2c248`) signals
 life — metric highlights, trend lines, the AI review trigger, active states.
 The green feels organic and grounded rather than the cold blue of typical
 developer tooling.
@@ -31,7 +197,7 @@ quiet, legible, and unmistakably crafted.
 
 The palette is a warm neutral foundation activated by one expressive accent.
 
-- **Primary — Olive `#5b6f00`.** The brand's signature green. Used for links,
+- **Primary — Olive `#b2c248`.** The brand's signature green. Used for links,
   active and accent states, and the `button-accent` fill. Its brighter sibling
   **Primary-bright — Lime `#b2c248`** appears as highlight washes, the audio
   waveform bars, and decorative emphasis. A pale **Accent-tint `#f2f6e1`**
