@@ -71,14 +71,26 @@
 - Test that a single "poor" metric on any page in a group marks the group as poor, even if other pages are good.
 - Mobile defaults to display; desktop accessible via toggle. Test that toggling changes all chart data and scorecard states.
 
-### INP Handling (Deferred, Phase 2)
+### Threshold Correctness (Google CWV Standard)
 
-- MVP summary records must have `"INP": null` (not omitted, not 0, not a dummy value).
-- UI must display "INP requires RUM (Phase 2)" or similar message, not "INP: N/A" or blank space that confuses stakeholders.
-- Test that a Phase 2 migration adding real INP data does not break MVP UI or break backward-compatibility queries against MVP summary files.
+- LCP: ≤2.5s = Good, ≤4.0s = Needs Work, >4.0s = Poor. Test that LCP 1540ms classifies as Good.
+- CLS: ≤0.1 = Good, ≤0.25 = Needs Work, >0.25 = Poor. Test that CLS 0.77 classifies as Poor (validates detection of real issue from brief).
+- TBT (headline interactivity proxy, INP deferred to Phase 2): ≤200ms = Good, ≤600ms = Needs Work, >600ms = Poor.
+- FCP: ≤1.8s = Good, ≤3.0s = Needs Work, >3.0s = Poor.
+- TTFB: ≤800ms = Good, ≤1.8s = Needs Work, >1.8s = Poor.
+- INP must be explicitly null or marked unavailable in MVP; never present as a metric (Phase 2 requires RUM for real measurement).
+- Threshold function must be unit-agnostic and testable in isolation: `classify(metric, thresholds) → "good" | "needs-work" | "poor"`.
 
-### Team Collaboration Notes (2026-05-31)
+#### Issue #2 Validation Summary (Yen)
 
-- Onboarding complete. All 10 testing decisions + 9 gating criteria documented in `.squad/decisions.md` awaiting team consensus.
-- Ready to review extraction code against gating criteria; will block PRs that skip testing, hardcode thresholds without audit, leak secrets, or allow profile mixing.
-- Sprint 1: Work with Livingston/Basher to establish extraction test fixtures; prepare unit test structure in `packages/extract/tests/`.
+**All acceptance criteria PASSED:**
+
+- ✓ SvelteKit static build succeeds; output to `build/` with prerendered `index.html` and bundled CSS assets
+- ✓ eHealth/Pulse visual direction: warm cream (`#f7f7f2`), olive primary (`#5b6f00`), lime accents (`#b2c248`); Quadrant serif + Melange sans; rounded cards/pills; spare shadows/spacing
+- ✓ Empty-state messaging: "Performance data is not loaded yet" with clear explanation ("Until `summary.json` lands, Pulse shows the state plainly instead of inventing placeholder metrics"); placeholder shell stats ("—" for page count, "No data" for last run)
+- ✓ Frontend stack: zero React imports; no backend runtime deps; Svelte 5 + Tailwind v4 + TypeScript only
+- ✓ Vite+ command documentation: `vp check`, `vp test`, `vp run -r build` all verified working (168 files formatted, 0 lint/type errors, 1 utils test pass, build succeeded)
+
+**Quality gates met:** SvelteKit → static HTML/CSS/JS; TypeScript strict; no React/backend runtime; clear empty state; consistent design tokens; Vite+ commands functional; ready for `summary.json` flow.
+
+**Verdict:** APPROVED for merge. Shell meets all acceptance criteria; ready for collection pipeline integration. No revisions required.

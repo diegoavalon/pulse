@@ -61,3 +61,21 @@
 
 - Onboarding complete (2026-05-31). All 7 pending UI decisions documented in `.squad/decisions.md` awaiting Rusty clarification on priorities.
 - Ready for Sprint 1: Tailwind token mapping + scorecard scaffolding to unblock downstream components.
+
+### Issue 2 Dashboard Shell (2026-05-31)
+
+- The design handoff settled on a Variation C-inspired landing page with a clean white/cream Pulse look, floating pill navigation, a Most Recent run area, and Variation B-like All Pages affordance.
+- For issue #2, the production Svelte route must not show mock vitals; it should clearly say no performance data is loaded until `summary.json` exists.
+- The frontend shell validates through `vp check`, `vp test`, and `vp run -r build` from the repository root.
+
+#### Issue #2 Completion Summary
+
+**Learnings from Linus:**
+
+- Implemented the design handoff as a SvelteKit/Tailwind shell rather than copying React prototype internals, preserving the Variation C editorial landing structure.
+- Replaced mock performance values with an explicit no-data state for first collection, improving user clarity.
+- Added `+layout.ts` prerendering (adapter-static in `svelte.config.js`) to ensure suitability for static GitHub Pages hosting.
+- Svelte 5 runes mode worked well for reactive state; `onMount` lifecycle suitable for future Chart.js initialization.
+- Theme.css integration with Tailwind custom properties (`@apply`, CSS variables) proved clean for enforcing brand tokens without duplication.
+
+**Status:** ✓ COMPLETE — Dashboard shell ready for data pipeline integration.

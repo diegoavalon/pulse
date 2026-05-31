@@ -405,6 +405,47 @@
 
 ---
 
+## Issue #2: Dashboard Shell Bootstrap
+
+**Status:** ✓ COMPLETE (2026-05-31)
+
+### Decision
+
+**What Linus Built:**
+
+- Implemented branded static SvelteKit shell using `adapter-static`, ensuring GitHub Pages compatibility
+- Variation C editorial landing structure: clean cream (`#f7f7f2`) canvas with olive primary (`#5b6f00`) and lime accents (`#b2c248`)
+- Floating pill navigation; "Most Recent run" section; "All Pages" affordance
+- Empty-state messaging: "Performance data is not loaded yet" with explanatory subtext ("Until `summary.json` lands, Pulse shows the state plainly instead of inventing placeholder metrics")
+- Shell stats display graceful fallback ("—" for page count, "No data" for last run) rather than mock data
+- No React dependencies; pure SvelteKit 2 + Svelte 5 (runes mode) + Tailwind v4 + TypeScript
+- Prerendering via `+layout.ts` + `svelte.config.js` adapter-static configuration
+
+### Validation
+
+**Yen Approval:**
+
+- ✓ Static build succeeds; output to `build/` with prerendered `index.html` and bundled CSS/JS assets
+- ✓ eHealth/Pulse visual direction achieved: warm cream canvas, white elevated surfaces, olive primary, lime accents; Quadrant serif display font, Melange sans body; rounded cards (`rounded-[28px]`), pill controls (`rounded-full`); spare shadows (`shadow-pulse`)
+- ✓ Empty-state messaging clear and prominent; no placeholder nonsense
+- ✓ Frontend stack verified: zero React imports, no backend runtime deps, no `process.env` in client code
+- ✓ Vite+ commands functional: `vp check` (168 files formatted, 0 errors), `vp test` (1 utils test pass), `vp run -r build` (success, ready for Pages)
+- ✓ Accessibility: `focus-visible:ring-2 focus-visible:ring-primary` on interactives; `aria-label` on profile toggle; semantic HTML; `aria-hidden` on decorative elements
+- ✓ Quality gates: SvelteKit → static HTML/CSS/JS; TypeScript strict; design tokens consistent; shell ready for `summary.json` integration
+- **Verdict:** APPROVED for merge. No revisions required.
+
+### Learnings
+
+**From Linus:**
+
+- **Svelte 5 Runes in Practice:** Reactive state management via `$derived` and `$state` works cleanly for dashboard layout; no need for external state container for first iteration
+- **Theme.css Integration:** CSS custom properties (`:root` in `app.css`) mirroring DESIGN.md design tokens integrate seamlessly with Tailwind `@apply` and direct `var()` references; decouples Tailwind config from brand values for maintainability
+- **Static Prerendering:** Adding `+layout.ts` with prerendering config ensures every route produces static HTML at build time; no server-side runtime overhead for Pages
+- **Empty-State UX:** Explicit "no data" state prevents user confusion; beats placeholder charts or mock metrics that look real but aren't
+- **Design Token Discipline:** Strict adherence to branded colors/spacing/typography from day one (Quadrant serif, Melange sans, 4px grid) prevents visual debt and ensures consistency for future component additions
+
+---
+
 ## Governance
 
 - All meaningful changes require team consensus
