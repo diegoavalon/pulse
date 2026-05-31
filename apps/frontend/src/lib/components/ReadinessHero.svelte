@@ -13,7 +13,7 @@
   const progressPct = $derived(Math.min((runsIngested / TOTAL_STEPS) * 100, 100));
 </script>
 
-<section class="rounded-[28px] border border-border bg-surface-elevated p-6 shadow-pulse sm:p-8 lg:p-10">
+<section class="section section-xl">
   <div
     class="mb-7 inline-flex items-center gap-2 rounded-full bg-accent-tint px-4 py-2 text-sm font-semibold text-primary"
   >
@@ -37,7 +37,7 @@
       </p>
     </div>
 
-    <div class="rounded-3xl border border-border bg-surface-sunken p-5">
+    <div class="card card-padding-sm" style="background: var(--color-surface-sunken);">
       <p class="text-sm font-semibold uppercase tracking-[0.18em] text-secondary">Readiness</p>
       <div class="mt-4 flex items-end gap-2">
         <span class="font-mono text-6xl font-semibold text-primary">{runsIngested}</span>

@@ -8,7 +8,7 @@
 
 <div
   id="diagnostics"
-  class="rounded-[28px] border border-border bg-primary p-6 text-accent-tint shadow-pulse sm:p-7"
+  class="panel panel-lg"
 >
   <p class="text-sm font-semibold uppercase tracking-[0.16em] text-accent-tint/80">
     Diagnostics underneath

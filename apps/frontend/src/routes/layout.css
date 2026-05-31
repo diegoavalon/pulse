@@ -2,6 +2,7 @@
 @plugin '@tailwindcss/forms';
 
 @import "theme.css";
+@import "../lib/styles/containers.css";
 
 :root {
   color: var(--color-ink);

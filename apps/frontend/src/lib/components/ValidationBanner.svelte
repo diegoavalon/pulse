@@ -2,7 +2,7 @@
   const steps = ['vp check', 'vp test', 'vp run -r build'] as const;
 </script>
 
-<section class="rounded-[28px] border border-dashed border-border bg-surface-sunken p-6 sm:p-7">
+<section class="panel panel-sunken panel-lg">
   <div class="flex flex-col gap-5 md:flex-row md:items-center md:justify-between">
     <div>
       <p class="text-sm font-semibold uppercase tracking-[0.16em] text-secondary">

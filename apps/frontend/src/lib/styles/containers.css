@@ -1,0 +1,102 @@
+/**
+ * Unified Container System
+ * 
+ * Three core container types using consistent design tokens from theme.css:
+ * 1. .card — Primary content containers (cards, panels, elevated surfaces)
+ * 2. .section — Hero sections and large content areas
+ * 3. .panel — Accent panels with colored backgrounds
+ */
+
+/* ============================================================ CARD */
+/**
+ * Purpose: Primary elevated content container
+ * Usage: Feature cards, stat cards, data tables, feeds
+ * Tokens: --color-surface-elevated, --color-border, --shadow-pulse, --radius-lg
+ */
+.card {
+  background: var(--color-surface-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-pulse);
+}
+
+.card-padding {
+  padding: var(--spacing-xl);
+}
+
+.card-padding-sm {
+  padding: var(--spacing-lg);
+}
+
+.card-padding-lg {
+  padding: var(--spacing-xxl);
+}
+
+/* Card with colored left border accent */
+.card-accent-left {
+  border-left-width: 4px;
+}
+
+/* ============================================================ SECTION */
+/**
+ * Purpose: Large content areas, hero sections
+ * Usage: Page heroes, major content sections
+ * Tokens: --color-surface-elevated, --color-border, --shadow-pulse, --radius-xl
+ */
+.section {
+  background: var(--color-surface-elevated);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-pulse);
+  padding: var(--spacing-xl);
+}
+
+.section-lg {
+  padding: var(--spacing-xxl);
+}
+
+.section-xl {
+  padding: var(--spacing-section);
+}
+
+/* ============================================================ PANEL */
+/**
+ * Purpose: Accent panels with colored backgrounds
+ * Usage: Diagnostic panels, special callouts, alert-style content
+ * Tokens: --color-primary, --color-accent-tint, --radius-xl
+ */
+.panel {
+  background: var(--color-primary);
+  color: var(--color-accent-tint);
+  border: 1px solid var(--color-border);
+  border-radius: var(--radius-xl);
+  box-shadow: var(--shadow-pulse);
+  padding: var(--spacing-xl);
+}
+
+.panel-lg {
+  padding: var(--spacing-xxl);
+}
+
+/* Panel with sunken surface (dashed border) */
+.panel-sunken {
+  background: var(--color-surface-sunken);
+  border: 1px dashed var(--color-border);
+  color: var(--color-on-surface);
+}
+
+/* ============================================================ UTILITIES */
+/**
+ * Spacing utilities that match our container system
+ */
+.container-gap {
+  gap: var(--spacing-xl);
+}
+
+.container-gap-sm {
+  gap: var(--spacing-lg);
+}
+
+.container-gap-lg {
+  gap: var(--spacing-xxl);
+}

@@ -8,9 +8,9 @@
   let { profile }: Props = $props();
 </script>
 
-<div class="rounded-[28px] border border-border bg-surface-elevated shadow-pulse">
+<div class="section section-lg">
   <div
-    class="flex flex-col gap-3 border-b border-border p-5 sm:flex-row sm:items-center sm:justify-between sm:p-6"
+    class="flex flex-col gap-3 border-b border-border pb-5 sm:flex-row sm:items-center sm:justify-between sm:pb-6"
   >
     <div>
       <p class="text-sm font-semibold uppercase tracking-[0.16em] text-secondary">Most Recent</p>
@@ -23,7 +23,7 @@
     </span>
   </div>
 
-  <div class="grid place-items-center px-5 py-12 text-center sm:px-10 sm:py-16">
+  <div class="grid place-items-center py-12 text-center sm:py-16">
     <div class="max-w-lg">
       <div
         class="mx-auto grid size-16 place-items-center rounded-full bg-accent-tint text-primary"
