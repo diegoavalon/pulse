@@ -9,6 +9,8 @@
     "prepare": "vp config"
   },
   "devDependencies": {
+    "@sveltejs/kit": "^2.57.0",
+    "@types/node": "^25.6.2",
     "vite-plus": "catalog:"
   },
   "engines": {
