@@ -68,7 +68,8 @@ async function findRunDirs(root) {
   async function walk(dir) {
     const entries = await fs.readdir(dir, { withFileTypes: true });
     const names = new Set(entries.map((e) => e.name));
-    if (names.has("browsertime.json")) {
+    // Accept directories with browsertime.json OR screenshots (indicates partial sitespeed run)
+    if (names.has("browsertime.json") || names.has("screenshots")) {
       matches.push(dir);
       return;
     }

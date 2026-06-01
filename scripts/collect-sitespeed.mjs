@@ -56,12 +56,24 @@ for (const pageMeta of selected) {
 
   const normalized = await normalizeRunOutput(rawRoot);
   if (!normalized.browsertime) {
-    throw new Error(`No browsertime JSON found for page '${pageId}' (${profile}).`);
+    console.warn(
+      `⚠️  No browsertime JSON found for page '${pageId}' (${profile}). This may indicate sitespeed collection failed (e.g., target site blocking requests).`,
+    );
+  } else {
+    await fs.copyFile(normalized.browsertime, path.join(pageRunRoot, "browsertime.json"));
   }
 
-  await fs.copyFile(normalized.browsertime, path.join(pageRunRoot, "browsertime.json"));
-  if (normalized.har) await fs.copyFile(normalized.har, path.join(pageRunRoot, "har.json"));
-  if (normalized.coach) await fs.copyFile(normalized.coach, path.join(pageRunRoot, "coach.json"));
+  if (normalized.har) {
+    await fs.copyFile(normalized.har, path.join(pageRunRoot, "har.json"));
+  } else {
+    console.warn(`⚠️  No HAR file found for page '${pageId}' (${profile}).`);
+  }
+
+  if (normalized.coach) {
+    await fs.copyFile(normalized.coach, path.join(pageRunRoot, "coach.json"));
+  } else {
+    console.warn(`⚠️  No Coach JSON found for page '${pageId}' (${profile}).`);
+  }
 
   const screenshotsDest = path.join(pageRunRoot, "screenshots");
   if (normalized.screenshots.length > 0) {

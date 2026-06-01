@@ -1,0 +1,63 @@
+BROWSERTIME COLLECTION GRACEFUL FAILURE FIX
+============================================
+
+PROBLEM:
+--------
+GitHub Actions run #26734701410 failed with:
+  "Error: No browsertime JSON found for page 'homepage' (desktop/mobile)"
+
+Root cause: ehealthinsurance.com blocking Docker container requests (403 errors)
+            → sitespeed.io runs but produces no browsertime.json
+            → collect-sitespeed.mjs throws hard error
+            → workflow fails, NO artifacts preserved (including screenshots)
+
+SOLUTION:
+---------
+Implemented graceful degradation across the artifact collection pipeline:
+
+1. collect-sitespeed.mjs (lines 57-76)
+   - Changed hard throw to console.warn() for missing browsertime.json
+   - Made HAR and Coach JSON collection conditional with warnings
+   - Allows workflow to continue and upload partial artifacts
+
+2. consolidate-sitespeed.mjs (lines 66-81)
+   - Updated findRunDirs() to accept directories with screenshots OR browsertime.json
+   - Previously only found directories WITH browsertime.json
+   - Now discovers partial runs for processing
+
+3. Extractor (no changes needed)
+   - Already handles missing browsertime.json gracefully
+   - Returns error result that consolidation logs as warning
+
+VALIDATION:
+-----------
+✅ vp check --fix   : All formatting/lint checks pass
+✅ vp test          : All 170 tests pass
+✅ vp run -r build  : Full project build succeeds
+✅ Workflow contract tests pass
+
+IMPACT:
+-------
+BEFORE: Hard failure → no artifacts → no debugging
+AFTER:  Graceful failure → partial artifacts → debugging enabled
+
+- Workflows complete with partial data when target sites block requests
+- Screenshots and raw output preserved for root cause analysis
+- Clear warning messages indicate what's missing and why
+- Full functionality preserved when browsertime IS available
+
+FILES CHANGED:
+--------------
+- scripts/collect-sitespeed.mjs
+- scripts/consolidate-sitespeed.mjs
+
+DOCUMENTATION:
+--------------
+- .squad/agents/basher/history.md (learnings appended)
+- .squad/decisions/inbox/basher-browsertime-graceful-failure.md (decision doc)
+
+NEXT STEPS:
+-----------
+1. Team consensus on decision doc (Diego, Livingston, Rusty)
+2. Monitor workflow runs to verify warnings surface correctly
+3. Consider retry logic for transient 403s (future enhancement)

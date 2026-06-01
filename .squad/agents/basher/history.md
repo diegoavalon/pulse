@@ -182,3 +182,57 @@ Completed replacement of committed 10-page `urls.json` with user-provided top-pa
 **Key Learning:** Catalog replacement must include all mirrors (fixture catalog, diagnostic maps, metadata) to prevent stale page ID references breaking tests and UI assumptions.
 
 **Decision Merged:** `.squad/decisions.md` locked this decision as single source of truth.
+
+---
+
+## Browsertime Collection Graceful Failure (2026-06-01)
+
+Fixed sitespeed artifact collection script to gracefully handle missing browsertime.json files instead of throwing hard errors.
+
+**Root Cause:**
+
+- When sitespeed.io collection fails (e.g., target site returns 403 blocking Docker container requests), no browsertime.json is generated
+- Original script at line 58-60 threw a hard error on missing browsertime, causing the entire workflow to fail
+- This prevented ANY artifacts from being collected, even if screenshots or other data were available
+
+**Fix Implementation:**
+
+- Changed hard error to warning when browsertime.json is missing
+- Made browsertime, HAR, and Coach JSON collection conditional with warnings
+- Script now continues and uploads whatever artifacts ARE available (screenshots, raw output)
+- Preserves full functionality when browsertime IS available
+
+**Files Changed:**
+
+- `scripts/collect-sitespeed.mjs` — Lines 57-74 now use conditional copy with console.warn() for missing artifacts
+
+**Validation:**
+
+- ✅ `vp check --fix` — Formatting applied
+- ✅ `vp test` — All 170 tests passed
+
+**Impact:**
+
+- Workflow no longer fails hard when target sites block requests
+- Partial artifact collection enables debugging (screenshots still captured)
+- Warning messages provide visibility into what's missing and why
+
+**Learnings:**
+
+- Hard failures in artifact collection scripts prevent ANY output from being preserved, making debugging impossible
+- Graceful degradation with warnings allows workflows to complete with partial data, enabling root cause analysis
+- When external dependencies (target sites) can fail unpredictably, collection scripts should be defensive and preserve whatever data IS available
+
+**Additional Fix (consolidate-sitespeed.mjs):**
+
+- Updated `findRunDirs()` to accept directories with screenshots OR browsertime.json (not just browsertime.json)
+- Ensures partial artifact runs are discovered and processed
+- Extractor already handles missing browsertime.json gracefully (returns error result logged as warning)
+
+**Complete Flow:**
+
+1. collect-sitespeed.mjs warns if browsertime.json missing, continues to create run directory with screenshots
+2. consolidate-sitespeed.mjs finds the directory (via screenshots presence)
+3. Extractor returns error result for missing browsertime.json
+4. Consolidation script logs warning, continues with other runs
+5. Partial data preserved, debugging enabled, workflow completes
