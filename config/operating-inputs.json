@@ -1,0 +1,36 @@
+{
+  "issue": 6,
+  "updatedAt": "2026-06-01",
+  "speedCurve": {
+    "directParityInMvp": false,
+    "notes": "MVP does not attempt direct SpeedCurve settings parity."
+  },
+  "collection": {
+    "iterations": 3,
+    "profiles": {
+      "mobile": {
+        "throttle": "4g"
+      },
+      "desktop": {
+        "throttle": "cable",
+        "viewport": {
+          "width": 1366,
+          "height": 768
+        }
+      }
+    }
+  },
+  "schedule": {
+    "localTime": "07:00",
+    "timeZone": "America/Los_Angeles",
+    "cronUtcCandidates": ["0 14 * * *", "0 15 * * *"]
+  },
+  "artifacts": {
+    "retentionDays": 14
+  },
+  "catalog": {
+    "seedFile": "urls.json",
+    "lockedPageCount": 10,
+    "source": "Top-page catalog provided by user"
+  }
+}

@@ -1,0 +1,99 @@
+name: Pulse Collect
+
+on:
+  schedule:
+    # 07:00 America/Los_Angeles (handles PST/PDT via dual UTC triggers)
+    - cron: "0 14 * * *"
+    - cron: "0 15 * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: pulse-collection
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  collect:
+    name: Collect (${{ matrix.profile }})
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - profile: mobile
+            throttle: 4g
+            viewport: "390x844"
+          - profile: desktop
+            throttle: cable
+            viewport: "1366x768"
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Enforce 07:00 America/Los_Angeles schedule
+        if: github.event_name == 'schedule'
+        shell: bash
+        run: |
+          LA_HOUR="$(TZ='America/Los_Angeles' date +%H)"
+          if [ "$LA_HOUR" != "07" ]; then
+            echo "Skipping run: local LA hour is $LA_HOUR, not 07"
+            exit 0
+          fi
+
+      - name: Encode operating inputs
+        shell: bash
+        run: |
+          mkdir -p artifacts
+          node --input-type=module <<'NODE'
+          import fs from 'node:fs';
+
+          const urls = JSON.parse(fs.readFileSync('urls.json', 'utf8'));
+          if (urls.length !== 10) {
+            throw new Error(`Expected exactly 10 seed catalog URLs, found ${urls.length}`);
+          }
+
+          const output = {
+            speedCurveDirectParityInMvp: false,
+            profile: process.env.PROFILE,
+            throttle: process.env.THROTTLE,
+            viewport: process.env.VIEWPORT,
+            localSchedule: '07:00 America/Los_Angeles',
+            artifactRetentionDays: 14,
+            seedCatalogFile: 'urls.json',
+            seedCatalogCount: urls.length
+          };
+
+          fs.writeFileSync(
+            `artifacts/collection-inputs-${process.env.PROFILE}.json`,
+            JSON.stringify(output, null, 2),
+          );
+          NODE
+        env:
+          PROFILE: ${{ matrix.profile }}
+          THROTTLE: ${{ matrix.throttle }}
+          VIEWPORT: ${{ matrix.viewport }}
+
+      - name: Upload collection input artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: collection-inputs-${{ matrix.profile }}
+          path: artifacts/collection-inputs-${{ matrix.profile }}.json
+          retention-days: 14
+
+  consolidate:
+    name: Consolidate inputs
+    runs-on: ubuntu-latest
+    needs: collect
+    steps:
+      - name: Download artifacts
+        uses: actions/download-artifact@v4
+        with:
+          path: collection-inputs
+
+      - name: Summarize effective defaults
+        shell: bash
+        run: |
+          echo "Issue #6 operating inputs have been encoded."
+          find collection-inputs -type f -name '*.json' -maxdepth 3 -print | sort

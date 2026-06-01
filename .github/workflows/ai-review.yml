@@ -1,0 +1,54 @@
+name: Run AI Review
+
+on:
+  workflow_dispatch:
+    inputs:
+      page_id:
+        description: "Tracked page ID from urls.json"
+        required: true
+        type: string
+      profile:
+        description: "Profile to review"
+        required: true
+        type: choice
+        options:
+          - mobile
+          - desktop
+      current_month_spend_usd:
+        description: "Current AI review spend this month in USD"
+        required: false
+        default: "0"
+        type: string
+      estimated_review_cost_usd:
+        description: "Estimated cost of this review in USD"
+        required: false
+        default: "0.25"
+        type: string
+
+permissions:
+  contents: read
+
+jobs:
+  guardrails:
+    runs-on: ubuntu-latest
+    outputs:
+      review_model: ${{ steps.guardrail.outputs.review_model }}
+      monthly_budget_usd: ${{ steps.guardrail.outputs.monthly_budget_usd }}
+      projected_spend_usd: ${{ steps.guardrail.outputs.projected_spend_usd }}
+      remaining_budget_usd: ${{ steps.guardrail.outputs.remaining_budget_usd }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Enforce AI review defaults and budget ceiling
+        id: guardrail
+        env:
+          AI_REVIEW_MONTHLY_SPEND_USD: ${{ github.event.inputs.current_month_spend_usd }}
+          AI_REVIEW_ESTIMATED_COST_USD: ${{ github.event.inputs.estimated_review_cost_usd }}
+        run: node scripts/ai-review-budget-guardrail.mjs
+
+      - name: Guardrail summary
+        run: |
+          echo "Model: ${{ steps.guardrail.outputs.review_model }}"
+          echo "Monthly budget: $${{ steps.guardrail.outputs.monthly_budget_usd }}"
+          echo "Projected spend: $${{ steps.guardrail.outputs.projected_spend_usd }}"
+          echo "Remaining budget: $${{ steps.guardrail.outputs.remaining_budget_usd }}"

@@ -38,8 +38,8 @@ describe("detail availability", () => {
 // ---- missing optional diagnostics ----------------------------------------
 
 describe("screenshot availability", () => {
-  it("quote-results has no screenshots on mobile", () => {
-    const det = detail("quote-results", "mobile");
+  it("dependent-on-health-plan has no screenshots on mobile", () => {
+    const det = detail("dependent-on-health-plan", "mobile");
     expect(det!.hasScreenshots).toBe(false);
     expect(det!.noShotReason).toMatch(/timeout|budget/i);
   });
@@ -69,20 +69,24 @@ describe("screenshot availability", () => {
 // ---- review availability states ------------------------------------------
 
 describe("review states", () => {
-  it("quote-results review is unavailable", () => {
-    expect(detail("quote-results", "mobile")!.review.state).toBe("unavailable");
+  it("dependent-on-health-plan review is unavailable", () => {
+    expect(detail("dependent-on-health-plan", "mobile")!.review.state).toBe("unavailable");
   });
 
-  it("medicare review is pending", () => {
-    expect(detail("medicare", "mobile")!.review.state).toBe("pending");
+  it("medicare-part-b-giveback review is pending", () => {
+    expect(detail("medicare-part-b-giveback", "mobile")!.review.state).toBe("pending");
   });
 
-  it("enrollment-cart review is pending", () => {
-    expect(detail("enrollment-cart", "mobile")!.review.state).toBe("pending");
+  it("medicare-advantage-to-medigap review is pending", () => {
+    expect(detail("medicare-advantage-to-medigap", "mobile")!.review.state).toBe("pending");
   });
 
   it("all other pages have review available", () => {
-    const noReview = new Set(["quote-results", "medicare", "enrollment-cart"]);
+    const noReview = new Set([
+      "dependent-on-health-plan",
+      "medicare-part-b-giveback",
+      "medicare-advantage-to-medigap",
+    ]);
     for (const page of PAGES) {
       if (!noReview.has(page.id)) {
         expect(detail(page.id, "mobile")!.review.state).toBe("available");
@@ -102,9 +106,9 @@ describe("render-blocking resources", () => {
   });
 
   it("blocker count increases with higher TBT pages", () => {
-    // quote-results has TBT=820ms (poor) — should have more head JS blockers
-    const heavy = detail("quote-results", "mobile")!;
-    const light = detail("account-login", "mobile")!;
+    // dependent-on-health-plan has TBT=820ms (poor) — should have more head JS blockers
+    const heavy = detail("dependent-on-health-plan", "mobile")!;
+    const light = detail("medicare-advantage-to-medigap", "mobile")!;
     expect(heavy.blockers.length).toBeGreaterThanOrEqual(light.blockers.length);
   });
 

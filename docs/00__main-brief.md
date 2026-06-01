@@ -204,6 +204,11 @@ workflow_dispatch: "Run Check Now" → one-off over tracked pages (same pipeline
 
 workflow_dispatch: "Run AI Review" → reads detail.json → Claude API (theme-aware)
 
+MVP defaults for AI review dispatch:
+
+- Model: `claude-haiku-4.5` (default on-demand review model)
+- Budget ceiling: `$50/month` (guardrail-enforced before review execution)
+
 → commits review .md → rebuild
 
 
@@ -310,7 +315,7 @@ match for apples-to-apples (we default to 3 iterations / 4g-mobile + cable-deskt
 
 4. **The initial 10 URLs** — homepage + which key flows? (IDs, labels, groups.)
 
-5. **Claude API budget ceiling** for on-demand reviews + which model.
+5. ✅ **Claude API defaults locked:** `claude-haiku-4.5` with `$50/month` ceiling.
 
 6. **Artifact retention** — keep Actions artifacts at 90 days or shorter; revisit S3 in Phase 2.
 

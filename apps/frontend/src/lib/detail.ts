@@ -92,7 +92,7 @@ export type RequestType = "document" | "css" | "js" | "font" | "image" | "xhr";
 
 // ---- constants ------------------------------------------------------------
 
-const DOMAIN = "www.qa.ehealthinsurance.com";
+const DOMAIN = "www.ehealthinsurance.com";
 
 export const TYPE_COLOR: Record<RequestType, string> = {
   document: "var(--muted)",
@@ -123,7 +123,7 @@ const POOL = {
     "/assets/runtime.4d2f.js",
     "/assets/vendor.9c0a.js",
     "/assets/main.5e7b.js",
-    "/assets/plan-finder.1ab3.js",
+    "/assets/resources-ifp.1ab3.js",
     "//www.googletagmanager.com/gtm.js",
     "//cdn.optimizely.com/js/2841.js",
     "//connect.facebook.net/en_US/fbevents.js",
@@ -143,23 +143,23 @@ const POOL = {
 // ---- review states per page -----------------------------------------------
 
 const REVIEW: Record<string, ReviewInfo> = {
-  "quote-results": {
+  "dependent-on-health-plan": {
     state: "unavailable",
     reason:
       "No passing baseline run to diff against — capture this page green once to unlock AI review.",
   },
-  medicare: {
+  "medicare-part-b-giveback": {
     state: "pending",
     reason: "Queued for AI review · 2 runs ahead in the analysis worker.",
   },
-  "enrollment-cart": {
+  "medicare-advantage-to-medigap": {
     state: "pending",
     reason: "Queued for AI review · running now.",
   },
 };
 
 const NO_SHOTS: Record<string, string> = {
-  "quote-results":
+  "dependent-on-health-plan":
     "Capture timed out — page exceeded the 10 s visual-complete budget on this profile.",
 };
 

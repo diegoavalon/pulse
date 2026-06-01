@@ -295,7 +295,7 @@ describe("Trend catalog data structures", () => {
   const mockSummary1: SummaryRecord = {
     id: "homepage",
     label: "Homepage",
-    url: "https://www.qa.ehealthinsurance.com/",
+    url: "https://www.ehealthinsurance.com/",
     profile: "mobile",
     timestamp: "2026-05-28T10:00:00Z",
     iterations: 3,
@@ -328,8 +328,8 @@ describe("Trend catalog data structures", () => {
   const mockPageHistory: PageHistory = {
     id: "homepage",
     label: "Homepage",
-    url: "https://www.qa.ehealthinsurance.com/",
-    group: "Acquisition",
+    url: "https://www.ehealthinsurance.com/",
+    group: "core",
     mobile: [mockSummary1, mockSummary2],
     desktop: [mockSummary3],
   };
