@@ -116,6 +116,7 @@ jobs:
       - name: Validate generated data and app build
         shell: bash
         run: |
+          rm -rf collection-artifacts
           npx vp check
           npx vp test
           npx vp run -r build
