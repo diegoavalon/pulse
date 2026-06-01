@@ -7,6 +7,7 @@ const { extractAndPersistRun } = await import(extractorDist);
 
 const artifactsRoot = path.resolve(process.argv[2] ?? "collection-artifacts");
 const dataRoot = path.resolve(process.argv[3] ?? "data");
+await fs.mkdir(dataRoot, { recursive: true });
 const urls = JSON.parse(await fs.readFile(path.resolve("urls.json"), "utf8"));
 const urlById = new Map(urls.map((u) => [u.id, u]));
 
