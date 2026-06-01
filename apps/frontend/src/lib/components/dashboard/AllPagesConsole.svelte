@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { base } from "$app/paths";
   import SparkArea from "./SparkArea.svelte";
   import Delta from "./Delta.svelte";
   import {
@@ -152,7 +153,7 @@
           {#each rows as page (page.id)}
             {@const d = page[profile]}
             {@const lcpRating = rating("LCP", d.cwv.LCP)}
-            <tr class="page" onclick={() => (window.location.href = `/pages/${page.id}`)}>
+            <tr class="page" onclick={() => (window.location.href = `${base}/pages/${page.id}`)}>
               <td class="name">
                 <div class="nm">
                   <span class="dot {d.status}" style="width:8px;height:8px" aria-hidden="true"></span>

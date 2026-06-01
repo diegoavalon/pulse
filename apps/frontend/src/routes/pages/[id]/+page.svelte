@@ -1,5 +1,6 @@
 <script lang="ts">
   import { onMount } from "svelte";
+  import { base } from "$app/paths";
   import { page } from "$app/state";
   import PulseNav from "$lib/components/dashboard/PulseNav.svelte";
   import ScoreRing from "$lib/components/dashboard/ScoreRing.svelte";
@@ -70,7 +71,7 @@
     <div class="dwrap">
       <!-- breadcrumb + page switcher -->
       <div class="crumb">
-        <a href="/all-pages" class="back">
+        <a href={`${base}/all-pages`} class="back">
           <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
             <path d="M19 12H5" /><path d="M11 18l-6-6 6-6" />
           </svg>
@@ -85,7 +86,7 @@
             value={id}
             onchange={(e) => {
               const v = (e.target as HTMLSelectElement).value;
-              window.location.href = `/pages/${v}`;
+              window.location.href = `${base}/pages/${v}`;
             }}
           >
             {#each PAGES as p (p.id)}
@@ -118,7 +119,7 @@
           <p class="dh-sum">
             Coach score <b>{d?.score}</b> ranks <b>#{rank}</b> of {s.total}
             {profile} pages —
-            <a href="/all-pages" class="ilink">
+            <a href={`${base}/all-pages`} class="ilink">
               see all in context
               <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
                 <path d="M5 12h14" /><path d="M13 6l6 6-6 6" />

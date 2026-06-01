@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { base } from "$app/paths";
   import type { Profile } from "$lib/data.js";
   import { toggleTheme } from "$lib/theme.svelte.js";
 
@@ -22,8 +23,8 @@
   </div>
 
   <div class="links">
-    <a href="/" class:active={activePage === "home"}>Home</a>
-    <a href="/all-pages" class:active={activePage === "allpages"}>
+    <a href={`${base}/`} class:active={activePage === "home"}>Home</a>
+    <a href={`${base}/all-pages`} class:active={activePage === "allpages"}>
       <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
         <circle cx="11" cy="11" r="6.5" /><path d="M20 20l-3.5-3.5" />
       </svg>

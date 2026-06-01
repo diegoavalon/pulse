@@ -1,4 +1,5 @@
 <script lang="ts">
+  import { base } from "$app/paths";
   import SparkArea from "./SparkArea.svelte";
   import MiniMetric from "./MiniMetric.svelte";
   import Delta from "./Delta.svelte";
@@ -30,7 +31,12 @@
   {#each runs as run, i (run.page.id)}
     {@const d = run.page[profile]}
     {@const lcpRating = rating("LCP", d.cwv.LCP)}
-    <a class="runrow" href="/pages/{run.page.id}" role="listitem" style="text-decoration:none;color:inherit">
+    <a
+      class="runrow"
+      href={`${base}/pages/${run.page.id}`}
+      role="listitem"
+      style="text-decoration:none;color:inherit"
+    >
       <div class="runtime">
         <div class="rel">
           {#if i < 2}<span class="live" aria-label="Recent"></span>{/if}
@@ -82,7 +88,7 @@
     </a>
   {/each}
 
-  <a class="view-all-link" href="/all-pages">
+  <a class="view-all-link" href={`${base}/all-pages`}>
     View all {totalPages} pages in the console
     <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
       <path d="M5 12h14" /><path d="M13 6l6 6-6 6" />
