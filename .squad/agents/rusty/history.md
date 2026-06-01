@@ -23,3 +23,39 @@
 ## Team Onboarding (2026-05-31)
 
 **Completed:** Rusty, Linus, Basher, Livingston, Yen got acquainted with brief, issue #1, and codebase. All 35+ pending decisions documented in `.squad/decisions.md` for team consensus. Orchestration logs and session log created. Ready for Sprint 1 kickoff.
+
+## Issue #6 Audit: MVP Operating Inputs (2026-06-01)
+
+**Locked:** Artifact retention (90 days), detail/screenshot retention (14-day rolling).
+
+**Assumed (pending verification):** 3 iterations, 4g mobile throttle, cable desktop throttle, no desktop CPU throttle.
+
+**Missing (HITL required):**
+
+1. Initial QA URL catalog (~10 pages with IDs, labels, URLs, groups)
+2. SpeedCurve parity verification (iterations, mobile/desktop throttles, CPU throttle)
+3. Daily run schedule (hour in UTC + timezone context)
+4. Claude API model choice (recommend Sonnet)
+5. Claude API budget ceiling (per-review or monthly)
+
+**Decision artifact:** `.squad/decisions/inbox/rusty-issue-6.md` with 5 ordered HITL prompts ready for Diego.
+
+**Next:** Await Diego's responses on prompts 1–5, verify SpeedCurve config, lock values in project config.
+
+**Impact:** Unblocks Sprint 3 collection pipeline once confirmed.
+
+---
+
+## Issue #6 Audit & HITL Facilitation (2026-06-01)
+
+Completed 5-prompt audit of Issue #6 acceptance criteria. Outcome:
+
+**Locked (2):** Artifact retention (90d), detail/screenshot retention (14d rolling).
+
+**Assumed (4):** Iterations (3), mobile throttle (4g), desktop throttle (cable), CPU throttle (none).
+
+**Missing HITL (4):** URL catalog, SpeedCurve parity, daily schedule, Claude model/budget.
+
+**Decision artifact:** `.squad/decisions/inbox/rusty-issue-6.md` with structured HITL prompts 1–5.
+
+**Orchestration logged:** `.squad/orchestration-log/2026-06-01T01-25-57Z-rusty-issue-6.md`

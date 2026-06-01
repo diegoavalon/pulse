@@ -137,3 +137,49 @@
 - Threshold classification baseline established (18 test cases covering all 6 CWV metrics)
 - Profile isolation enforced at both data model and frontend component level
 - Ready for Issue #3 implementation with proven contract stability
+
+### Issue #6: MVP Operating Inputs & AI/Claude Constraints (2026-06-01)
+
+**Investigation & Findings:**
+
+- **Claude Model Status:** Decision documented in `.squad/decisions.md` but not implemented. Options: opus-4 (quality-first), 3.5-sonnet (recommended, balanced), 3-sonnet (cost-first). **No model pinned in code.**
+- **Budget Ceiling:** Completely undocumented. Gap for issue #6 acceptance criterion "Claude budget/model expectations confirmed."
+- **Usage Guardrails:** No enforcement mechanism, cost limits, or monitoring in place. Only implicit constraint is "on-demand only" (workflow_dispatch).
+- **Cost Estimates:** 3.5-sonnet at ~$0.003–0.015/review; MVP "PoC budget" recommendation is $50/month (~165 reviews).
+- **Prompt Template:** Mentioned in decisions ("Quick Wins" + "Deep Dives" + "Blockers") but not drafted. Theme context injection method (WP/WC knowledge) not specified.
+- **HAR Filtering:** Which render-blocking entries to include in review input not decided.
+- **Secret Safety:** No plan to scan review markdown for accidental PII/URLs/hosts; relying on prompt instructions.
+
+**Decision Document Created:**
+
+- Path: `.squad/decisions/inbox/livingston-issue-6.md`
+- Covers: exact current values (Claude model options, constraints confirmed), gaps (budget, monitoring, prompt template), recommendation options (3 cost tiers, enforcement approaches)
+- Next action: Rusty confirms model + budget; Livingston drafts prompt template; Basher implements workflow + usage logging
+
+**Key Decisions to Lock:**
+
+1. Claude model: Choose 3.5-sonnet (MVP-friendly) or alternative?
+2. Budget ceiling: Choose $50 PoC, $200 generous, or $500 production?
+3. Usage enforcement: Manual Actions log review or automated Slack alerting?
+4. Prompt structure: Draft "Quick Wins"/"Deep Dives"/"Blockers" template with theme context injection
+
+**Constraints Confirmed Explicit (6 items):**
+
+- On-demand only, no RUM, no arbitrary URLs, no login-protected pages, no cookies/auth workarounds, no production monitoring in MVP
+- All stated in `docs/00__main-brief.md`; must be documented in issue #6 acceptance checklist
+
+---
+
+## Issue #6 Analysis: Claude Model/Budget Options (2026-06-01)
+
+Completed AI/Claude constraints survey. Outcome:
+
+**Model options (3):** Opus-4 (high quality, high cost), 3.5-Sonnet (balanced, RECOMMENDED), 3-Sonnet (cost-focused).
+
+**Budget models (3):** $50/month PoC (RECOMMENDED), $200/month generous, $500/month production.
+
+**MVP constraints (6):** On-demand only, lab data only, no RUM, no arbitrary URLs, no auth, no production monitoring.
+
+**Decision artifact:** `.squad/decisions/inbox/livingston-issue-6.md` with model/budget analysis + constraint checklist.
+
+**Orchestration logged:** `.squad/orchestration-log/2026-06-01T01-25-57Z-livingston-issue-6.md`

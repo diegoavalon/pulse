@@ -557,3 +557,465 @@
 - Document architectural decisions here
 - Keep history focused on work, decisions focused on direction
 - Pending decisions from team onboarding (2026-05-31) require consensus before implementation begins
+
+## Issue #6 Decision: MVP Operating Inputs Audit & HITL Facilitation
+
+**Rusty | 2026-06-01**
+
+### Summary
+
+Audited the repository and `docs/00__main-brief.md` for values needed to finalize issue #6 (Finalize MVP operating inputs and parity settings). Result: **2 items locked, 4 assumed + pending verification, 4 completely missing**.
+
+### Locked Values ✅
+
+| Item                                | Value                 | Source                                                         |
+| ----------------------------------- | --------------------- | -------------------------------------------------------------- |
+| Artifact retention (GitHub Actions) | 90 days default       | docs/00\_\_main-brief.md:315 + .squad/decisions.md             |
+| Detail/screenshot retention         | 14-day rolling window | docs/00\_\_main-brief.md:157 + .squad/decisions.md (confirmed) |
+
+### Assumed (Requires Verification) ⚠️
+
+| Item                 | Default    | Source                       | Action                                        |
+| -------------------- | ---------- | ---------------------------- | --------------------------------------------- |
+| Iterations           | 3 (median) | docs/00\_\_main-brief.md:322 | Verify against SpeedCurve actual              |
+| Mobile throttle      | `4g`       | docs/00\_\_main-brief.md:115 | Verify against SpeedCurve config              |
+| Desktop throttle     | `cable`    | docs/00\_\_main-brief.md:115 | Verify against SpeedCurve config              |
+| Desktop CPU throttle | None       | inferred                     | Confirm exact profile (cable + CPU throttle?) |
+
+### Missing (HITL Required) ❌
+
+1. **Initial QA URL catalog** — ~10 pages with stable IDs, labels, URLs, groups. Required format: `urls.json` with `{id, label, url, group}` tuples.
+2. **Daily run schedule** — Hour (UTC) and timezone context. Low-traffic window for QA.
+3. **Claude API model** — Which model for on-demand reviews (e.g., claude-3-5-sonnet)?
+4. **Claude API budget** — Per-review cost tolerance or monthly ceiling (e.g., $1/review or $50/month).
+
+### HITL Decision Prompts (Ordered Checklist)
+
+Present to Diego Avalon + product/QA one-by-one via issue #6 thread:
+
+#### Prompt 1: Initial QA Page Catalog
+
+```
+We need the initial ~10 QA pages to track. For each, provide:
+- ID (stable, lowercase, e.g., `homepage`)
+- Label (human-friendly, e.g., "Home")
+- URL (full QA URL, no auth required)
+- Group (logical grouping for scorecard, e.g., `core`, `checkout`)
+
+Example:
+[
+  {"id": "homepage", "label": "Homepage", "url": "https://qa.ehealth.local/", "group": "core"}
+]
+```
+
+#### Prompt 2: SpeedCurve Parity Config
+
+```
+What are SpeedCurve's current collection settings?
+- Number of iterations (we default to 3; correct?)
+- Mobile connectivity (we default to `4g`; what does SpeedCurve use?)
+- Desktop connectivity (we default to `cable`; what does SpeedCurve use?)
+- CPU throttle (desktop only; any applied?)
+```
+
+#### Prompt 3: Desktop Profile Definition
+
+```
+Confirm the exact desktop collection profile:
+- Connectivity: `cable`?
+- CPU throttle: None / 2x / 4x / custom?
+- Device/viewport: 1366x768 (sitespeed.io default) or specific?
+```
+
+#### Prompt 4: Daily Run Schedule
+
+```
+When should the daily collection run (low-traffic window)?
+- Hour (UTC): e.g., 02:00 UTC, 10:00 UTC, 22:00 UTC?
+- Timezone context: What timezone is QA in?
+(We'll schedule UTC and you verify alignment.)
+```
+
+#### Prompt 5: Claude API Model & Budget
+
+```
+For on-demand AI reviews (theme-aware advice per page/profile):
+- Model: claude-3-5-sonnet / claude-opus-4.1 / other?
+  (Recommend Sonnet for cost/quality balance.)
+- Budget: Max cost per review, or monthly ceiling?
+  (e.g., "$1 per review" or "$50/month total".)
+- Scope: Both mobile + desktop, or mobile only?
+```
+
+### Recommended Flow
+
+1. **Diego** posts answers to prompts 1–5 as issue #6 comment (or Slack/email to Rusty).
+2. **Rusty** looks up SpeedCurve config (UI / docs / ask product) + compares defaults.
+3. **Rusty** locks final values in `.squad/decisions.md` or project config (TBD post-decision).
+4. **Unblock Sprint 3:** Collection workflow can finalize GitHub Actions schedule + Claude API call.
+
+### Rationale
+
+- **Locked items** are firm across all references; no follow-up needed.
+- **Assumed defaults** are reasonable per design doc but require external verification (SpeedCurve audit).
+- **Missing items** are pure human input: catalog domain knowledge (QA URLs), product choice (schedule), budget/model (cost control).
+- **Parity verification** ensures day-over-day comparison fairness (different settings = incompatible trends).
+
+### Files to Update Once Confirmed
+
+- `urls.json` — committed URL catalog
+- `.github/workflows/collect.yml` — schedule cron + Claude model + budget env var (if per-request limit)
+- `packages/utils/src/config.ts` — collection profile defs (iterations, throttles, timezones)
+- `docs/01__operating-inputs.md` — new operational reference doc (optional)
+
+---
+
+**Blocked on:** Diego's answers + SpeedCurve config lookup.
+**Unblocks:** Sprint 3 (collection + AI review workflows).
+**Estimated resolution:** End of day (assuming Diego turnaround ≤ 2h).
+
+---
+
+## Issue #6 Survey: MVP Operating Inputs & Parity Settings — Pipeline Review
+
+**Basher | 2026-06-01**
+
+### Acceptance Criteria — Assessment
+
+#### ✅ Partially Met: SpeedCurve Parity Settings
+
+**Current State:**
+
+- Decided: 3 iterations (median), mobile throttle = `4g`, desktop throttle = `cable`
+- Location: `docs/00__main-brief.md` line 111–115
+- Rationale: Noise reduction + runner independence + SpeedCurve comparability documented
+
+**Gap:**
+
+- Marked as "OPEN Q" in brief: "Match against SpeedCurve's current config"
+- No actual SpeedCurve iteration count / connectivity profile lookup
+- No confirmation that `4g` (mobile) and `cable` (desktop) match your current SpeedCurve setup
+
+**Action Required:**
+
+- Verify SpeedCurve's current throttle profile + iteration strategy
+- Confirm or override the proposed MVP defaults
+- Document exact profile names for sitespeed.io CLI (e.g., `--throttle 4g`)
+
+---
+
+#### ✅ Partially Met: Desktop Profile Definition
+
+**Current State:**
+
+- Proposed: `cable` (faster than mobile `4g`); no CPU throttle mentioned
+- Location: `.squad/agents/basher/history.md`, `.squad/decisions.md`
+- Stated: "MVP rigid (mobile 4g | desktop cable); parameterization deferred to Phase 2"
+
+**Gap:**
+
+- Exact desktop profile incomplete: throttle name only, no device target or CPU setting
+- Brief says "e.g. `cable`" suggesting flexibility, but exact choice not locked
+- No sitespeed.io profile definition in repo; will need mapping to real params
+
+**Action Required:**
+
+- Confirm desktop throttle = `cable` (or alternative)
+- Confirm if CPU throttle is disabled or set to a specific value
+- Create profile definitions before writing collection workflow
+
+---
+
+#### ❌ Not Started: Daily Run Schedule + Timezone
+
+**Current State:**
+
+- Documented as ACTION ITEM in `.squad/decisions.md`:
+  - "Coordinate with product/QA to identify best low-traffic window"
+  - Examples: `0 2 * * *` (2 AM UTC) or `0 10 * * *` (10 AM UTC)
+  - No decision made; no workflow scheduled yet
+
+**Gap:**
+
+- No schedule confirmed
+- No timezone decided (UTC vs. your org's local time)
+- No collection workflow file exists (`.github/workflows/collect.yml` or similar)
+
+**Action Required:**
+
+- Decide collection window (time + timezone)
+- Consider: low-traffic time for your QA environment, ops team availability for triage
+- Once decided, will be written to `cron` field in GitHub Actions workflow
+
+---
+
+#### ✅ Decided: Artifact Retention Policy for MVP
+
+**Current State:**
+
+- Decision: Option A (90-day GitHub Actions default)
+- Location: `.squad/decisions.md`, `docs/00__main-brief.md`
+- Rationale: Summary.json trends committed infinitely; detail + screenshots bounded to 14-day rolling window
+- Not yet configured in workflow (no workflow file exists)
+
+**Detail:**
+
+- Trend data (`summary.json`): committed to repo, infinite retention ✅
+- Rich detail + screenshots: baked into site for last 14 days only ✅
+- Raw artifacts (GitHub Actions): default 90-day expiry (no special cleanup needed) ✅
+
+**Action Required:**
+
+- None — use as-is for MVP; workflow will reference default retention
+- Reserve Phase 2 for custom retention logic if needed
+
+---
+
+#### ❌ Not Started: Claude Model & Budget Ceiling for AI Review
+
+**Current State:**
+
+- No decision made; marked as "defer until Livingston wires Claude API workflow"
+- Location: `.squad/decisions.md` under "Secret Rotation & Access Control"
+- On-demand only (no per-run cost bleed)
+
+**Gap:**
+
+- No Claude model chosen (e.g., `claude-3-sonnet-20240229`)
+- No budget/cost ceiling defined (e.g., "max $X/month for on-demand reviews")
+- No workflow_dispatch endpoint wired yet
+
+**Action Required:**
+
+- Decide Claude model (availability, cost, capability tier)
+- Define budget ceiling + overage handling (disable button if exceeded?)
+- Defer exact implementation to Livingston (AI/Claude specialist)
+
+---
+
+#### ✅ Confirmed: MVP Constraints Remain Explicit
+
+**Current State:**
+
+- All constraints documented in `docs/00__main-brief.md` lines 89–104:
+  - QA pages only (not production)
+  - No login-protected pages
+  - No cookies/auth workarounds
+  - No arbitrary ad-hoc URLs (run-now is limited to tracked pages)
+
+**Validation:**
+
+- ✅ No tracked page behind login/auth
+- ✅ Data layer has no embedded secrets
+- ✅ URLs driven by committed `urls.json` (stable, vetted)
+
+---
+
+#### ❌ Not Started: Initial ~10 QA Page Entries
+
+**Current State:**
+
+- No `urls.json` file in repo
+- Schema expected: `[{id, label, url, group}]` (per decision #4, `docs/00__main-brief.md` line 145)
+- No sample data, no placeholder
+
+**Gap:**
+
+- User must provide the list; this is human input
+- Needs stable IDs (no UUIDs; e.g., `homepage`, `pricing`, `contact`)
+- Needs group labels (for scorecard clustering)
+
+**Action Required:**
+
+- Provide or confirm the initial ~10 pages (IDs, labels, URLs, groups)
+- Once confirmed, scaffold `urls.json` in repo root
+- Use as single source of truth for all collection runs
+
+---
+
+### Summary: What Needs User Input
+
+| Item                                   | Current                          | Status                     | Owner              |
+| -------------------------------------- | -------------------------------- | -------------------------- | ------------------ |
+| SpeedCurve iteration/throttle settings | 3 iter, 4g mobile, cable desktop | Proposed; needs validation | Diego/Product      |
+| Desktop profile exact definition       | cable (no CPU throttle detail)   | Proposed; incomplete       | Diego/Product      |
+| Daily run schedule                     | None decided                     | ACTION ITEM                | Diego/QA           |
+| Daily run timezone                     | None decided                     | ACTION ITEM                | Diego/QA           |
+| Claude model & budget                  | None decided                     | ACTION ITEM                | Diego + Livingston |
+| ~10 QA page entries                    | None confirmed                   | ACTION ITEM                | Diego/Product      |
+
+---
+
+### Proposed Safe Defaults (Where No Value Exists)
+
+**If user requests immediate MVP scaffolding without decisions:**
+
+```json
+// urls.json — placeholder structure (user to fill)
+[
+  {
+    "id": "homepage",
+    "label": "Homepage",
+    "url": "https://example.com/",
+    "group": "key_pages"
+  }
+  // ... 9 more entries
+]
+```
+
+**GitHub Actions workflow defaults (to be written):**
+
+- Schedule: `0 2 * * *` (2 AM UTC) — low-traffic default; user overrides post-MVP
+- Timezone: UTC (no offset; always explicit in cron)
+- Retention: 90 days (GitHub Actions default; no override needed)
+- Throttle: `4g` (mobile), `cable` (desktop) — from brief recommendation
+- Iterations: 3 (median strategy; from brief decision #6)
+
+**Claude defaults (for Livingston):**
+
+- Model: `claude-3-sonnet-20240229` (balanced cost/capability)
+- Budget: $100/month (soft ceiling; warn if exceeded)
+
+---
+
+### Next Steps
+
+1. **Diego:** Confirm or override throttle/profile/schedule/budget items above
+2. **Diego + QA:** Decide daily collection window (time + timezone)
+3. **Diego + Product:** Provide ~10 QA page entries (or placeholder to scaffold)
+4. **Basher:** Once inputs confirmed, scaffold collection workflow + `urls.json`
+5. **Livingston:** Once Claude model/budget confirmed, wire AI review workflow
+
+---
+
+## Issue #6 AI/Claude Constraints — Current State vs Missing
+
+**Livingston | 2026-06-01**
+
+**Status:** Pending user confirmation  
+**Owner:** Livingston (Data/AI Engineer)  
+**Acceptance Criteria:** All three items below must be confirmed for issue #6 resolution.
+
+---
+
+### 1. Claude Model Expectation for On-Demand Review
+
+#### Current State
+
+**Decision documented but pending implementation:**
+
+- Options: `claude-opus-4` (highest quality, ~200k context, highest cost), `claude-3.5-sonnet` (balanced quality/speed/cost, ~200k context), `claude-3-sonnet` (cheaper, lower quality)
+- **Recommendation:** `claude-3.5-sonnet` (cost-aware balance for MVP)
+- **Action assignee:** Rusty (Lead) — final model decision
+- **Constraint:** On-demand only (`workflow_dispatch`), never automatic per-run reviews
+
+#### Gap
+
+- **No explicit model pinned** in code or workflow config
+- No fallback model specified if Claude API becomes unavailable
+- No usage telemetry / logging plan for cost tracking
+
+#### Recommendation Options
+
+| Option                        | Model               | Cost/Call              | Context     | Use Case                                                      |
+| ----------------------------- | ------------------- | ---------------------- | ----------- | ------------------------------------------------------------- |
+| **A: Quality-First**          | `claude-opus-4`     | ~$0.015–0.05 USD/call  | 200k tokens | High-quality theme-aware reviews; accept higher per-call cost |
+| **B: Balanced (RECOMMENDED)** | `claude-3.5-sonnet` | ~$0.003–0.015 USD/call | 200k tokens | MVP cost-aware; same capability as 3-sonnet with better speed |
+| **C: Cost-First**             | `claude-3-sonnet`   | ~$0.003–0.010 USD/call | 200k tokens | Aggressive cost control; acceptable quality for MVP           |
+
+**Cost note:** Actual per-review cost depends on:
+
+- Input size (detail.json + HAR + theme context = ~10–50 KB, ~2k–10k input tokens)
+- Output size (review markdown = ~1k–5k output tokens)
+- Volume (one-off reviews only = low frequency in MVP)
+
+---
+
+### 2. Budget Ceiling Expectation / Usage Guardrails for MVP
+
+#### Current State
+
+- **No budget ceiling documented**
+- **No usage guardrails defined**
+- **No cost monitoring mechanism**
+- Cost control mentioned only as "on-demand only" (implicit rate limiting)
+
+#### Gap
+
+- Acceptance criterion "Claude budget ceiling expectations" is not addressed
+- No documented max spend per month/quarter
+- No alerting if API costs exceed threshold
+- No rate limiting or review quota enforcement
+
+#### Recommendation Options
+
+| Option                                        | Budget                                    | Rationale                                                                                 | Enforcement                                           |
+| --------------------------------------------- | ----------------------------------------- | ----------------------------------------------------------------------------------------- | ----------------------------------------------------- |
+| **A: Proof-of-Concept (RECOMMENDED for MVP)** | $50/month (~165 reviews at 3.5-sonnet)    | Conservative; catch issues early; manual GitHub Actions secret rotation if overages occur | Manual review of Actions logs + Anthropic billing     |
+| **B: Generous (Team Trust)**                  | $200/month (~665 reviews at 3.5-sonnet)   | Assumes ad-hoc review frequency; covers spike testing; developer trust model              | Same as A, but raises alert threshold                 |
+| **C: Production-Ready**                       | $500/month (~1,600 reviews at 3.5-sonnet) | Production thresholds; supports team growth; requires monitoring automation               | Add GitHub Actions cost-tracking job + Slack alerting |
+
+**Notes:**
+
+- Pricing estimates assume **3.5-sonnet** model at current Claude API rates (May 2026)
+- **Enforcement:** Add GitHub Actions job that logs cumulative API usage (via `Anthropic.messages.count_tokens()`). No hard limit in GitHub Actions (secret cannot be revoked mid-build); instead, surface usage in logs + monthly review
+
+#### Suggested MVP Approach
+
+1. **Start with Option A ($50/month):** Conservative, low risk
+2. **Monthly review:** Check `gh actions logs` for API cost trends
+3. **Upgrade to Option B/C** after 2–3 months of data if team demand is higher
+
+---
+
+### 3. Constraints That Must Remain Explicit for MVP Scope
+
+#### Current State (Confirmed)
+
+From `docs/00__main-brief.md`:
+
+- ✅ **On-demand only:** `workflow_dispatch` trigger, never automatic per-run
+- ✅ **Theme-aware:** Must reference known issues (WP sticky header, WC checkout modals, eHealth branding)
+- ✅ **Server-side:** Claude API key stored as GitHub Actions secret; never client-side
+- ✅ **Output format:** Committed as markdown under `data/<id>/<profile>/reviews/<timestamp>.md`
+- ✅ **Audience:** Developers (technical, action-oriented language)
+- ✅ **Detail dependency:** Input includes `detail.json` + HAR + render-blocking diagnostics
+- ✅ **No secrets leaked:** Markdown output must sanitize URLs, PII, internal hosts
+
+#### Gaps
+
+- **Prompt template not drafted:** "Quick Wins" + "Deep Dives" + "Blockers" structure mentioned but not implemented
+- **Theme context injection method:** How to feed WP/WC knowledge into prompt not specified
+- **HAR filtering logic:** Which HAR entries to include (render-blocking only? top N? all?) not decided
+- **Output validation:** No plan to scan markdown for accidental secrets/PII
+
+#### Explicit MVP Constraints (To be documented)
+
+Add these to acceptance criteria:
+
+1. **No RUM data:** MVP uses lab data only (detail.json from sitespeed.io)
+2. **No arbitrary URLs:** Reviews only pages in `urls.json`
+3. **No login-protected pages:** QA URLs only, no auth workarounds
+4. **No cookies/session injection:** Detail data must capture fresh sessions
+5. **No production monitoring in MVP:** Only QA environment (matches collection scope)
+6. **Review availability:** Blocked on "No passing baseline run to diff against" (UI shows "pending AI review")
+
+---
+
+### Decision Checklist for Rusty/Diego
+
+- [ ] Approve Claude model: `claude-3.5-sonnet` (or alternative)?
+- [ ] Approve budget ceiling: $50/month PoC (or alternative)?
+- [ ] Confirm usage enforcement: Manual monthly review via Actions logs?
+- [ ] Confirm all 6 MVP constraints above are acceptable?
+- [ ] Assign implementation: Who drafts prompt template + HAR filter logic?
+
+---
+
+### Next Steps
+
+1. **Rusty confirms:** Model + budget + enforcement approach
+2. **Livingston drafts:** Example review.md template + prompt structure
+3. **Basher implements:** Workflow config + GitHub Actions secret + usage logging
+4. **Linus reviews:** Theme context injection (WP/WC knowledge + eHealth branding)
+5. **Issue #6 acceptance:** All criteria met + decision document moved to `.squad/decisions/approved/`
