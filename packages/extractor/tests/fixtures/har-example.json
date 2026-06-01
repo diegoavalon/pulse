@@ -1,0 +1,88 @@
+{
+  "log": {
+    "version": "1.2",
+    "entries": [
+      {
+        "startedDateTime": "2026-05-29T13:41:03.000Z",
+        "_startMs": 0,
+        "_blocking": false,
+        "_thirdParty": false,
+        "_lcp": false,
+        "request": { "method": "GET", "url": "https://www.ehealthinsurance.com/" },
+        "response": {
+          "status": 200,
+          "content": { "size": 42000, "mimeType": "text/html; charset=utf-8" },
+          "bodySize": 42000
+        },
+        "timings": { "send": 1, "wait": 888, "receive": 60 },
+        "time": 949
+      },
+      {
+        "startedDateTime": "2026-05-29T13:41:04.000Z",
+        "_startMs": 950,
+        "_blocking": true,
+        "_thirdParty": false,
+        "_lcp": false,
+        "request": {
+          "method": "GET",
+          "url": "https://www.ehealthinsurance.com/assets/app.7f3c.css"
+        },
+        "response": {
+          "status": 200,
+          "content": { "size": 60000, "mimeType": "text/css" },
+          "bodySize": 60000
+        },
+        "timings": { "send": 1, "wait": 150, "receive": 80 },
+        "time": 231
+      },
+      {
+        "startedDateTime": "2026-05-29T13:41:04.100Z",
+        "_startMs": 970,
+        "_blocking": true,
+        "_thirdParty": true,
+        "_lcp": false,
+        "request": { "method": "GET", "url": "https://www.googletagmanager.com/gtm.js" },
+        "response": {
+          "status": 200,
+          "content": { "size": 180000, "mimeType": "application/javascript" },
+          "bodySize": 180000
+        },
+        "timings": { "send": 1, "wait": 280, "receive": 120 },
+        "time": 401
+      },
+      {
+        "startedDateTime": "2026-05-29T13:41:04.800Z",
+        "_startMs": 1800,
+        "_blocking": false,
+        "_thirdParty": false,
+        "_lcp": true,
+        "request": {
+          "method": "GET",
+          "url": "https://www.ehealthinsurance.com/assets/hero-family.webp"
+        },
+        "response": {
+          "status": 200,
+          "content": { "size": 420000, "mimeType": "image/webp" },
+          "bodySize": 420000
+        },
+        "timings": { "send": 1, "wait": 200, "receive": 350 },
+        "time": 551
+      },
+      {
+        "startedDateTime": "2026-05-29T13:41:05.500Z",
+        "_startMs": 2500,
+        "_blocking": false,
+        "_thirdParty": false,
+        "_lcp": false,
+        "request": { "method": "GET", "url": "https://www.ehealthinsurance.com/api/eligibility" },
+        "response": {
+          "status": 200,
+          "content": { "size": 8000, "mimeType": "application/json" },
+          "bodySize": 8000
+        },
+        "timings": { "send": 1, "wait": 180, "receive": 20 },
+        "time": 201
+      }
+    ]
+  }
+}

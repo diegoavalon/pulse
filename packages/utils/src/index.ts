@@ -12,6 +12,17 @@ export type {
 
 export { latestSnapshots, extractMetricSeries, extractScoreSeries } from "./summary.js";
 
+// Detail diagnostic record exports
+export type {
+  ResourceType,
+  CommittedRequest,
+  CommittedBlocker,
+  CommittedAdvice,
+  AdviceSeverity,
+  PageTiming,
+  DetailRecord,
+} from "./detail.js";
+
 // Threshold and classification exports
 export type { Rating, ThresholdDef } from "./thresholds.js";
 

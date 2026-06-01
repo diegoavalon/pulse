@@ -1,0 +1,13 @@
+{
+  "info": {
+    "sitespeed.io": { "version": "41.2.0" }
+  },
+  "url": "https://www.ehealthinsurance.com/about-ehealth/careers-benefit",
+  "timestamp": "2026-05-29T13:41:03Z",
+  "statistics": {
+    "timings": {
+      "largestContentfulPaint": { "median": 2100 },
+      "firstContentfulPaint": { "median": 1400 }
+    }
+  }
+}

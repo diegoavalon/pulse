@@ -1,0 +1,31 @@
+{
+  "info": {
+    "sitespeed.io": { "version": "41.2.0" }
+  },
+  "url": "https://www.ehealthinsurance.com/resources/individual-and-family/can-added-dependent-health-insurance-plan",
+  "timestamp": "2026-05-29T13:41:03Z",
+  "statistics": {
+    "timings": {
+      "largestContentfulPaint": { "median": 4320, "mean": 4500 },
+      "firstContentfulPaint": { "median": 2640, "mean": 2700 },
+      "timeToFirstByte": { "median": 1210, "mean": 1250 },
+      "cumulativeLayoutShift": { "median": 0.769, "mean": 0.782 },
+      "cpu": {
+        "longTasks": {
+          "totalBlockingTime": { "median": 820, "mean": 840 }
+        }
+      }
+    },
+    "transfer": {
+      "javascript": { "median": 2100000 },
+      "css": { "median": 210000 },
+      "image": { "median": 1700000 },
+      "other": { "median": 590000 },
+      "total": { "median": 4600000 }
+    },
+    "pageinfo": {
+      "requests": { "median": 184 },
+      "thirdParty": { "requests": { "median": 73 } }
+    }
+  }
+}

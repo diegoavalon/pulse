@@ -1,0 +1,32 @@
+{
+  "median": {
+    "coachAdvice": {
+      "score": 72,
+      "performance": {
+        "score": 72,
+        "advice": {
+          "fastRender": {
+            "score": 20,
+            "advice": "3 render-blocking resources delay first paint. Inline critical CSS and defer non-critical scripts.",
+            "weight": 7
+          },
+          "avoidRenderBlocking": {
+            "score": 30,
+            "advice": "Eliminate render-blocking stylesheets by inlining above-the-fold CSS.",
+            "weight": 5
+          },
+          "unusedCss": {
+            "score": 60,
+            "advice": "Reduce unused CSS by tree-shaking and removing unused selectors.",
+            "weight": 3
+          },
+          "cacheHeaders": {
+            "score": 85,
+            "advice": "Add Cache-Control: max-age=31536000, immutable to hashed static assets.",
+            "weight": 2
+          }
+        }
+      }
+    }
+  }
+}

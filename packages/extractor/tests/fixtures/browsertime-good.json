@@ -1,0 +1,32 @@
+{
+  "info": {
+    "sitespeed.io": { "version": "41.2.0" },
+    "browsertime": { "version": "22.4.0" }
+  },
+  "url": "https://www.ehealthinsurance.com/",
+  "timestamp": "2026-05-29T13:41:03Z",
+  "statistics": {
+    "timings": {
+      "largestContentfulPaint": { "median": 1540, "mean": 1570, "p99": 1820 },
+      "firstContentfulPaint": { "median": 1264, "mean": 1290 },
+      "timeToFirstByte": { "median": 888, "mean": 901 },
+      "cumulativeLayoutShift": { "median": 0.041, "mean": 0.042 },
+      "cpu": {
+        "longTasks": {
+          "totalBlockingTime": { "median": 8, "mean": 9 }
+        }
+      }
+    },
+    "transfer": {
+      "javascript": { "median": 900000 },
+      "css": { "median": 120000 },
+      "image": { "median": 800000 },
+      "other": { "median": 480000 },
+      "total": { "median": 2300000 }
+    },
+    "pageinfo": {
+      "requests": { "median": 101 },
+      "thirdParty": { "requests": { "median": 34 } }
+    }
+  }
+}
