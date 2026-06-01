@@ -6,17 +6,26 @@ on:
     - cron: "0 14 * * *"
     - cron: "0 15 * * *"
   workflow_dispatch:
+    inputs:
+      page_id:
+        description: "Optional catalog page id from urls.json (blank = all pages)"
+        required: false
+        type: string
+      run_id:
+        description: "Optional run id override (YYYY-MM-DDTHH-MM-SS)"
+        required: false
+        type: string
 
 concurrency:
   group: pulse-collection
   cancel-in-progress: false
 
 permissions:
-  contents: read
+  contents: write
 
 jobs:
   collect:
-    name: Collect (${{ matrix.profile }})
+    name: Collect raw artifacts (${{ matrix.profile }})
     runs-on: ubuntu-latest
     strategy:
       fail-fast: false
@@ -32,6 +41,11 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
       - name: Enforce 07:00 America/Los_Angeles schedule
         if: github.event_name == 'schedule'
         shell: bash
@@ -42,58 +56,78 @@ jobs:
             exit 0
           fi
 
-      - name: Encode operating inputs
+      - name: Collect sitespeed artifacts
         shell: bash
-        run: |
-          mkdir -p artifacts
-          node --input-type=module <<'NODE'
-          import fs from 'node:fs';
-
-          const urls = JSON.parse(fs.readFileSync('urls.json', 'utf8'));
-          if (urls.length !== 10) {
-            throw new Error(`Expected exactly 10 seed catalog URLs, found ${urls.length}`);
-          }
-
-          const output = {
-            speedCurveDirectParityInMvp: false,
-            profile: process.env.PROFILE,
-            throttle: process.env.THROTTLE,
-            viewport: process.env.VIEWPORT,
-            localSchedule: '07:00 America/Los_Angeles',
-            artifactRetentionDays: 14,
-            seedCatalogFile: 'urls.json',
-            seedCatalogCount: urls.length
-          };
-
-          fs.writeFileSync(
-            `artifacts/collection-inputs-${process.env.PROFILE}.json`,
-            JSON.stringify(output, null, 2),
-          );
-          NODE
         env:
           PROFILE: ${{ matrix.profile }}
           THROTTLE: ${{ matrix.throttle }}
           VIEWPORT: ${{ matrix.viewport }}
+          ITERATIONS: "3"
+          PAGE_ID: ${{ github.event.inputs.page_id }}
+          RUN_ID: ${{ github.event.inputs.run_id }}
+        run: |
+          node scripts/collect-sitespeed.mjs
 
-      - name: Upload collection input artifact
+      - name: Upload raw sitespeed artifact
         uses: actions/upload-artifact@v4
         with:
-          name: collection-inputs-${{ matrix.profile }}
-          path: artifacts/collection-inputs-${{ matrix.profile }}.json
+          name: sitespeed-${{ matrix.profile }}
+          path: artifacts/runs
           retention-days: 14
 
   consolidate:
-    name: Consolidate inputs
+    name: Consolidate and commit dashboard data
     runs-on: ubuntu-latest
     needs: collect
     steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: vp install
+
+      - name: Build extractor package
+        run: vp run extractor#build
+
       - name: Download artifacts
         uses: actions/download-artifact@v4
         with:
-          path: collection-inputs
+          path: collection-artifacts
 
-      - name: Summarize effective defaults
+      - name: Extract committed dashboard data from artifacts
         shell: bash
         run: |
-          echo "Issue #6 operating inputs have been encoded."
-          find collection-inputs -type f -name '*.json' -maxdepth 3 -print | sort
+          node scripts/consolidate-sitespeed.mjs collection-artifacts data
+
+      - name: Validate generated data and app build
+        shell: bash
+        run: |
+          vp check
+          vp test
+          vp run -r build
+
+      - name: Commit consolidated data
+        shell: bash
+        run: |
+          if git diff --quiet -- data; then
+            echo "No dashboard data changes to commit."
+            exit 0
+          fi
+
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add data
+          git commit -m "chore(data): update committed sitespeed extraction output"
+          git push
+
+      - name: Workflow contract checks
+        shell: bash
+        run: |
+          vp test packages/extractor/tests/collect-workflow-contract.test.ts
