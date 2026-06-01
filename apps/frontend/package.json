@@ -12,6 +12,8 @@
     "check:watch": "svelte-kit sync && svelte-check --tsconfig ./tsconfig.json --watch"
   },
   "dependencies": {
+    "@fontsource-variable/open-sans": "catalog:",
+    "@fontsource/poppins": "catalog:",
     "chart.js": "catalog:"
   },
   "devDependencies": {

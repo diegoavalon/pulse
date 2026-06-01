@@ -13,13 +13,14 @@
 </script>
 
 <nav class="pnav" aria-label="Site navigation">
+  <div class="container flex items-center">
   <div class="brand">
     <div class="mark" aria-hidden="true">
       <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round">
         <path d="M2 12h4l2.5-7 4 14 2.5-7H22" />
       </svg>
     </div>
-    <b>Vitals</b>
+    <b>eVitals</b>
   </div>
 
   <div class="links">
@@ -84,5 +85,6 @@
         </svg>
       {/if}
     </button>
+    </div>
   </div>
 </nav>

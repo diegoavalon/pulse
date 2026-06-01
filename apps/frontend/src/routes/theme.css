@@ -1,5 +1,5 @@
 @theme {
-  --color-primary: #b2c248;
+  --color-primary: #4dcb2a;
   --color-primary-bright: #b2c248;
   --color-ink: #292929;
   --color-surface: #f7f7f2;
@@ -12,15 +12,15 @@
   --color-accent-tint: #f2f6e1;
   --color-warning: #febe29;
   --color-danger: #e95d3d;
-  --font-display: "Quadrant", "Playfair Display", Georgia, serif;
-  --font-headline-lg: "Quadrant", "Playfair Display", Georgia, serif;
-  --font-headline-md: "Quadrant", "Playfair Display", Georgia, serif;
-  --font-headline-sm: "Quadrant", "Playfair Display", Georgia, serif;
-  --font-lead: "Melange", "Hanken Grotesk", ui-sans-serif, system-ui, sans-serif;
-  --font-body-lg: "Melange", "Hanken Grotesk", ui-sans-serif, system-ui, sans-serif;
-  --font-body-md: "Melange", "Hanken Grotesk", ui-sans-serif, system-ui, sans-serif;
-  --font-body-sm: "Melange", "Hanken Grotesk", ui-sans-serif, system-ui, sans-serif;
-  --font-label-sm: "Melange", "Hanken Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-display: "Poppins", sans-serif;
+  --font-headline-lg: "Poppins", sans-serif;
+  --font-headline-md: "Poppins", sans-serif;
+  --font-headline-sm: "Poppins", sans-serif;
+  --font-lead: "Open Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-body-lg: "Open Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-body-md: "Open Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-body-sm: "Open Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-label-sm: "Open Sans", ui-sans-serif, system-ui, sans-serif;
   --font-mono: "JetBrains Mono", "SFMono-Regular", Consolas, monospace;
   --text-display: clamp(3.5rem, 8vw, 5.75rem);
   --text-headline-lg: clamp(2.75rem, 6vw, 4.25rem);

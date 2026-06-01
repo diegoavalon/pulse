@@ -12,6 +12,8 @@ catalog:
   vitest: npm:@voidzero-dev/vite-plus-test@latest
   vite-plus: latest
   chart.js: ^4.5.1
+  "@fontsource-variable/open-sans": ^5.2.7
+  "@fontsource/poppins": ^5.2.7
 overrides:
   vite: "catalog:"
   vitest: "catalog:"

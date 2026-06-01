@@ -6,6 +6,12 @@ settings:
 
 catalogs:
   default:
+    '@fontsource-variable/open-sans':
+      specifier: ^5.2.7
+      version: 5.2.7
+    '@fontsource/poppins':
+      specifier: ^5.2.7
+      version: 5.2.7
     chart.js:
       specifier: ^4.5.1
       version: 4.5.1
@@ -33,6 +39,12 @@ importers:
 
   apps/frontend:
     dependencies:
+      '@fontsource-variable/open-sans':
+        specifier: 'catalog:'
+        version: 5.2.7
+      '@fontsource/poppins':
+        specifier: 'catalog:'
+        version: 5.2.7
       chart.js:
         specifier: 'catalog:'
         version: 4.5.1
@@ -115,6 +127,12 @@ packages:
 
   '@emnapi/wasi-threads@1.2.1':
     resolution: {integrity: sha512-uTII7OYF+/Mes/MrcIOYp5yOtSMLBWSIoLPpcgwipoiKbli6k322tcoFsxoIIxPDqW01SQGAgko4EzZi2BNv2w==}
+
+  '@fontsource-variable/open-sans@5.2.7':
+    resolution: {integrity: sha512-wzCLm2STuekK9Fz58DiuBnk4GgJpvvVtAU85a4b06ACNG/UsVjQcCvkUd6R/ETlHfsaykCUZamLRvSXg4KtWuA==}
+
+  '@fontsource/poppins@5.2.7':
+    resolution: {integrity: sha512-6uQyPmseo4FgI97WIhA4yWRlNaoLk4vSDK/PyRwdqqZb5zAEuc+Kunt8JTMcsHYUEGYBtN15SNkMajMdqUSUmg==}
 
   '@jridgewell/gen-mapping@0.3.13':
     resolution: {integrity: sha512-2kkt/7niJ6MgEPxF0bYdQ6etZaA+fQvDcLKckhy1yIQOzaoKjBBjSj63/aLVjYE3qhRt5dvM+uUyfCg6UKCBbA==}
@@ -1325,6 +1343,10 @@ snapshots:
     dependencies:
       tslib: 2.8.1
     optional: true
+
+  '@fontsource-variable/open-sans@5.2.7': {}
+
+  '@fontsource/poppins@5.2.7': {}
 
   '@jridgewell/gen-mapping@0.3.13':
     dependencies:
