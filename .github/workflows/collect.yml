@@ -94,14 +94,11 @@ jobs:
         with:
           node-version: 22
 
-      - name: Install Vite+ CLI
-        run: npm install --global vite-plus@latest
-
       - name: Install dependencies
-        run: vp install
+        run: npx --yes -p vite-plus@latest vp install
 
       - name: Build extractor package
-        run: vp run extractor#build
+        run: npx vp run extractor#build
 
       - name: Download artifacts
         uses: actions/download-artifact@v4
@@ -116,9 +113,9 @@ jobs:
       - name: Validate generated data and app build
         shell: bash
         run: |
-          vp check
-          vp test
-          vp run -r build
+          npx vp check
+          npx vp test
+          npx vp run -r build
 
       - name: Commit consolidated data
         shell: bash
@@ -143,7 +140,7 @@ jobs:
       - name: Workflow contract checks
         shell: bash
         run: |
-          vp test packages/extractor/tests/collect-workflow-contract.test.ts
+          npx vp test packages/extractor/tests/collect-workflow-contract.test.ts
 
   deploy:
     name: Build and deploy dashboard to Pages
@@ -167,14 +164,11 @@ jobs:
         with:
           node-version: 22
 
-      - name: Install Vite+ CLI
-        run: npm install --global vite-plus@latest
-
       - name: Install dependencies
-        run: vp install
+        run: npx --yes -p vite-plus@latest vp install
 
       - name: Build static dashboard
-        run: vp run frontend#build
+        run: npx vp run frontend#build
 
       - name: Setup Pages
         uses: actions/configure-pages@v5
