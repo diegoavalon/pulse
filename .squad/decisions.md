@@ -446,6 +446,111 @@
 
 ---
 
+## Issue #5: Profile-Aware Trend History & Charts
+
+**Status:** ✓ COMPLETE (2026-05-31)
+
+### Frontend Implementation (Linus)
+
+**Decision:** Implement profile-aware trend charts using Chart.js initialized in Svelte `onMount`, with design tokens consumed via CSS custom properties and profile isolation enforced by component-level reactive bindings.
+
+**Components Created:**
+
+1. **TrendChart.svelte** — Chart.js wrapper component
+   - Initializes Chart.js in `onMount` to avoid SSR issues
+   - Consumes CSS custom properties for all chart colors (`--good`, `--ni`, `--poor`, `--muted`, `--color-surface-elevated`, `--color-border`)
+   - Dynamically determines line color based on latest value's rating (good → green, ni → yellow, poor → red)
+   - Supports CWV metrics (LCP, CLS, TBT with `fmtMetric`) and score metrics (Coach Score as integer)
+   - Destroys chart instance on component unmount to prevent memory leaks
+
+2. **TrendCard.svelte** — Section container
+   - Displays LCP trend and Coach Score trend in two-column grid
+   - Profile-aware: trend data from `det.d` which is profile-isolated
+   - Empty state when trend data insufficient (<2 points)
+   - Informational note: "Trends show {profile} profile only. Switch profiles to see desktop or mobile independently."
+
+**Integration:** Added TrendCard to `/pages/[id]/+page.svelte` above diagnostics grid, full-width for readability. Profile switching triggers Svelte reactive `$derived` bindings → TrendCard re-renders → Chart.js destroys old chart and re-initializes with new profile data.
+
+**Validation:** ✓ Build succeeds (`vp run -r build`), tests pass (47 total, includes 21 new trend tests), TypeScript clean, profile isolation verified through re-renders.
+
+**Trade-offs:** Chart.js chosen for well-documented framework-agnostic approach with out-of-the-box tooltip/legend/axis support. Bundle cost ~50KB gzipped acceptable for UX improvement. Alternatives (native SVG, D3.js, Recharts) rejected for complexity, bundle size, or React incompatibility.
+
+---
+
+### Data Contract (Livingston)
+
+**Decision:** Implement append-friendly, profile-aware time-series data contract supporting Chart.js visualizations while maintaining strict profile isolation and explicit units.
+
+**Data Structures:**
+
+1. **SummaryRecord** — Single run record with explicit units in field names
+   - Fields: id, label, url, profile, timestamp (ISO 8601Z), cwv, coachScore, transfer, requests, thirdPartyRequests, sitespeedVersion, runId
+   - CWV metrics: LCP (ms), CLS (unitless), TBT (ms), FCP (ms), TTFB (ms), INP (null in MVP)
+   - Transfer sizes: total, js, css, image, other (all bytes)
+
+2. **PageHistory** — Profile-aware container with independent mobile/desktop arrays
+   - Each array chronological (oldest first) for append-friendly writes
+   - Supports summary-only runs (no detail dependency)
+
+3. **TrendCatalog** — Top-level index keyed by page ID
+   - Includes lastUpdated and pageCount metadata
+   - Single source for both scorecard and trend chart data
+
+**Threshold Classification (`thresholds.ts`):**
+
+- LCP: ≤2500ms good, ≤4000ms ni, >4000ms poor
+- CLS: ≤0.1 good, ≤0.25 ni, >0.25 poor
+- TBT: ≤200ms good, ≤600ms ni, >600ms poor
+- FCP: ≤1800ms good, ≤3000ms ni, >3000ms poor
+- TTFB: ≤800ms good, ≤1800ms ni, >1800ms poor
+- INP: ≤200ms good, ≤500ms ni, >500ms poor (Phase 2, MVP returns null)
+
+**Helper Functions:**
+
+- `rateMetric` — Classify single metric value
+- `ratePageStatus` — Worst of headline metrics (LCP, CLS, TBT) determines status
+- `formatMetricValue` — Units-aware formatting ("1.54 s", "0.769", "888 ms")
+- `latestSnapshots` — Extract most recent run per page/profile
+- `extractMetricSeries` — Direct Chart.js consumption without transformation
+- `extractScoreSeries` — Coach score time-series extraction
+
+**Validation:** ✓ 46 comprehensive tests covering all 18 threshold boundaries, profile isolation, INP null handling, formatting edge cases. `vp check` clean (180 files formatted, 51 linted, 0 errors). Static build succeeds. 92 total tests pass.
+
+**Key Decisions:**
+
+- Units explicit in field names and type comments, never wrapped in separate unit objects
+- Profile dimension first-class; each page has independent mobile/desktop arrays
+- Summary-only runs remain visible in trends via `PageHistory` structure
+- Latest status and trend views derive from same `SummaryRecord` contract
+- Schema version field optional for MVP, ready for Phase 2 migrations
+- Trend data structure supports append-only writes (chronological arrays, no sorting required)
+
+---
+
+### Test Coverage (Yen)
+
+**Decision:** Implement comprehensive acceptance test suite (21 tests) validating all Issue #5 requirements in `apps/frontend/src/lib/trend.test.ts`.
+
+**Coverage:**
+
+1. **Trend Grouping** — Each page has independent mobile/desktop trend histories keyed by `${pageId}:${profile}`. All pages in same group independently queryable by profile without cross-contamination.
+
+2. **Profile Isolation** — Switching profiles never mixes data. Mobile and desktop summaries compute independently from separate `ProfileData` instances. Deltas calculated from same-profile historical data only.
+
+3. **Units & Labels** — LCP trends milliseconds (validated range 0–20,000ms), score trends unitless integers 0–100, THRESHOLDS define expected units for all CWV metrics (ms for LCP/TBT/FCP/TTFB, empty string for CLS), all threshold boundaries numerically comparable to trend data.
+
+4. **Summary-Only Visibility** — Historical trend data exists independently of detail availability. Minimum 10 data points per trend. Deltas computed from penultimate summary record regardless of detail retention.
+
+5. **Shared Contract** — Latest trend points equal current CWV/score values. Summary aggregates and current status both derive from `ProfileData`. No duplicate data sources.
+
+**Rationale:** No new fixtures needed; existing deterministic fixture data in `data.ts` provides sufficient coverage through 14-point trend series per page per profile. 21 tests cover all acceptance criteria plus edge cases (boundary values, delta calculations, summary aggregation correctness).
+
+**Validation:** ✓ All 47 tests pass (21 new + 25 detail + 1 utils). Format/lint: 180 files formatted, 0 errors/warnings. Build succeeds; static output ready for Pages deployment.
+
+**Impact:** Blocks none. Enables frontend developers to confidently integrate trend charts knowing data contract validated. Ready for integration once Issue #3 (data schema & extraction) delivers live summary data.
+
+---
+
 ## Governance
 
 - All meaningful changes require team consensus

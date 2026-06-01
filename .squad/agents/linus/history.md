@@ -79,3 +79,59 @@
 - Theme.css integration with Tailwind custom properties (`@apply`, CSS variables) proved clean for enforcing brand tokens without duplication.
 
 **Status:** ✓ COMPLETE — Dashboard shell ready for data pipeline integration.
+
+### Issue #5 Profile-Aware Trend History and Charts (2026-05-31)
+
+**What was built:**
+
+- Installed Chart.js as a frontend dependency (`vp install chart.js`)
+- Created `TrendChart.svelte` component that renders line charts using Chart.js initialized in Svelte `onMount`
+- Created `TrendCard.svelte` component that displays multiple trend charts (LCP and Coach Score) with profile-aware data
+- Integrated TrendCard into the page detail view (`/pages/[id]`)
+- Charts consume design tokens from CSS custom properties (`--good`, `--ni`, `--poor`, `--color-surface-elevated`, `--muted`)
+- Charts are profile-aware: mobile and desktop data never mix; switching profiles re-renders charts with correct trend data
+- Empty state handling when trend data is insufficient (< 2 data points)
+
+**Learnings from Linus:**
+
+- Chart.js registers all components via `Chart.register(...registerables)` in `onMount` to avoid SSR issues
+- Design token consumption via `getComputedStyle(document.documentElement).getPropertyValue()` ensures charts match brand palette
+- Chart line color is dynamically determined by the latest value's rating (`good` → green, `ni` → yellow, `poor` → red)
+- Tooltip and grid colors follow the eHealth brand: surface-elevated backgrounds, muted text, border hairlines
+- Profile switching is handled by Svelte's reactive `$derived` bindings; Chart.js is destroyed and re-initialized on profile change via cleanup in `onMount`
+- Score-based metrics (Coach Score) require special formatting logic separate from CWV metrics (no "ms" suffix, integer display)
+- Trend data comes from existing `ProfileData.lcpTrend` and `ProfileData.scoreTrend` arrays (already profile-isolated in the data model)
+- Full-width trend section sits above the diagnostics grid to maximize visibility and avoid competing with waterfall/filmstrip details
+
+**Validation:**
+
+- ✓ `vp run -r build` succeeds; static build outputs to `build/` with Chart.js bundled
+- ✓ `vp test` passes all 47 tests (detail.test.ts, trend.test.ts, index.test.ts)
+- ✓ No TypeScript errors introduced; all imports resolve correctly
+- ✓ Pre-existing Svelte a11y warnings (invalid href="#", role="listitem") unrelated to this issue
+
+**Status:** ✓ COMPLETE — Profile-aware trend charts rendering with design-token-driven Chart.js config.
+
+### Team Context — Issue #5 Sprint Summary (2026-06-01)
+
+**Parallel Deliverables:**
+
+- **Livingston (Data/AI):** Formalized `SummaryRecord` contract in `packages/utils/src/summary.ts` with profile-aware `PageHistory` structure and `TrendCatalog` index. Implemented threshold classification (`thresholds.ts`) covering all Google Web Vitals with 46 tests validating profile isolation and unit consistency. Frontend now has shared types for scorecard and trend derivation.
+
+- **Yen (Testing):** Created 21 acceptance tests in `apps/frontend/src/lib/trend.test.ts` validating all Issue #5 requirements (trend grouping, profile isolation, units/labels, summary-only visibility, shared contract). All 47 project tests passing; quality gates met.
+
+**Team Dependencies Satisfied:**
+
+- Trend data extraction helpers (`extractMetricSeries`, `extractScoreSeries`) ready for dashboard consumption
+- Threshold functions (`rateMetric`, `ratePageStatus`) ready for scorecard display
+- Profile isolation patterns established; design token consumption model proven
+- Test baseline established for regression prevention in Phase 2
+
+**Blocked By:** Issue #3 (data extraction pipeline) pending for live `summary.json` integration.
+
+**Impact Summary:**
+
+- Frontend shell (Issue #2) now integrated with trend visualization
+- Data contract (Livingston) unblocks collection pipeline design
+- Test coverage (Yen) prevents profile-contamination regressions
+- Ready for Issue #3 (extraction) → Issue #4 (collection) pipeline

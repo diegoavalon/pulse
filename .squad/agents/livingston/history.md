@@ -70,3 +70,70 @@
 - 3 decisions ready for immediate team alignment: Claude model + budget, review prompt template (with Linus), comparison strategy.
 - 1 action item: Rusty decides Claude model + budget ceiling; Basher pins in workflow.
 - Ready for Sprint 1: Await schema finalization from Rusty/Yen, then implement extraction + consolidation pipeline.
+
+### Issue #5: Profile-Aware Trend History Data Contract (2026-05-31)
+
+**Implementation:**
+
+- Created formal TypeScript data contract in `packages/utils/src/summary.ts` for append-friendly, profile-aware time series.
+- Defined `SummaryRecord` interface matching established Tier 1 schema (id, label, url, profile, timestamp, cwv, coachScore, transfer, requests, thirdPartyRequests, sitespeedVersion, runId).
+- Defined `PageHistory` structure with independent mobile/desktop time-series arrays (chronological order, oldest first).
+- Defined `TrendCatalog` as top-level index keyed by page ID for all tracked pages.
+- Added `LatestSnapshot` extraction to derive scorecard state from most recent run per profile.
+- Added `extractMetricSeries` and `extractScoreSeries` helpers for Chart.js consumption.
+
+**Threshold Classification:**
+
+- Created `packages/utils/src/thresholds.ts` implementing Google Web Vitals thresholds (LCP ≤2.5s good, CLS ≤0.1 good, TBT ≤200ms good, etc.).
+- Defined `rateMetric`, `rateCoachScore`, and `ratePageStatus` classification functions.
+- Implemented `formatMetricValue` and `formatBytes` with explicit units (e.g., "1.54 s", "2.3 MB", "0.769" for CLS).
+- Added `validateMetricValue` and `validateCoachScore` for extraction error detection.
+- Headline metrics (LCP, CLS, TBT) determine page status; worst rating wins.
+
+**Validation:**
+
+- Comprehensive test suite (46 tests) covering:
+  - All 18 metric threshold boundary cases (6 metrics × 3 rating tiers).
+  - Profile isolation (mobile/desktop histories never mix).
+  - INP null handling (MVP returns "na", Phase 2 thresholds ready).
+  - Formatting edge cases (trailing zeros, bytes, CLS precision).
+  - Latest snapshot extraction and time-series building.
+- All tests pass. `vp check` clean (180 files formatted, 51 files linted, zero errors).
+- Static build succeeds; ready for GitHub Pages deployment.
+
+**Key Decisions:**
+
+- Units are explicit in field names and type comments, never wrapped in separate unit objects.
+- Profile dimension is first-class; each page has independent mobile/desktop arrays.
+- Summary-only runs (no detail) remain visible in trends via `PageHistory` structure.
+- Latest status and trend views derive from the same `SummaryRecord` contract.
+- Schema version field optional for MVP, ready for Phase 2 migrations.
+- Trend data structure supports append-only writes (chronological arrays, no sorting required).
+
+### Team Context — Issue #5 Sprint Summary (2026-06-01)
+
+**Parallel Deliverables:**
+
+- **Linus (Frontend):** Implemented `TrendChart.svelte` and `TrendCard.svelte` components with Chart.js initialized in `onMount`. Design tokens consumed via CSS custom properties. Profile isolation enforced through reactive `$derived` bindings. All 47 tests pass including 21 new trend tests.
+
+- **Yen (Testing):** Created 21 acceptance tests in `apps/frontend/src/lib/trend.test.ts` validating trend grouping, profile isolation, units/labels, summary-only visibility, and shared contract. Quality gates: build succeeds, format/lint clean, 92 total tests pass.
+
+**Team Dependencies Established:**
+
+- Frontend now consuming `SummaryRecord` types from `@pulse/utils` package
+- `extractMetricSeries` and `extractScoreSeries` helpers ready for trend chart data flow
+- Threshold functions (`ratePageStatus`) ready for scorecard integration
+- Profile isolation patterns established; schema version field ready for Phase 2 migrations
+
+**Extraction Pipeline Next:**
+
+- Issue #3 (data schema & extraction) will implement Node extraction script
+- SummaryRecord contract ready for validation in extraction layer
+- TrendCatalog structure supports append-only writes with no sorting required
+
+**Impact Summary:**
+
+- Data contract now shared across team (frontend, extraction, AI reviews)
+- Threshold classification baseline established (18 test cases covering all 6 CWV metrics)
+- Profile isolation enforced at both data model and frontend component level
+- Ready for Issue #3 implementation with proven contract stability
