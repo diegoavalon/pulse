@@ -31,6 +31,18 @@ describe("collect workflow contract", () => {
     expect(workflow).toContain("git commit");
   });
 
+  test("deploys pages from consolidated run data", () => {
+    expect(workflow).toContain("outputs:");
+    expect(workflow).toContain("commit_sha:");
+    expect(workflow).toContain("ref: ${{ needs.consolidate.outputs.commit_sha }}");
+    expect(workflow).toContain("actions/configure-pages@v5");
+    expect(workflow).toContain("actions/upload-pages-artifact@v3");
+    expect(workflow).toContain("actions/deploy-pages@v4");
+    expect(workflow).toContain("path: apps/frontend/build");
+    expect(workflow).toContain("pages: write");
+    expect(workflow).toContain("id-token: write");
+  });
+
   test("prevents overlapping runs", () => {
     expect(workflow).toContain("concurrency:");
     expect(workflow).toContain("group: pulse-collection");

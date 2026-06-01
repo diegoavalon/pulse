@@ -21,7 +21,7 @@ concurrency:
   cancel-in-progress: false
 
 permissions:
-  contents: write
+  contents: read
 
 jobs:
   collect:
@@ -79,6 +79,10 @@ jobs:
     name: Consolidate and commit dashboard data
     runs-on: ubuntu-latest
     needs: collect
+    permissions:
+      contents: write
+    outputs:
+      commit_sha: ${{ steps.capture_commit.outputs.sha }}
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -127,7 +131,53 @@ jobs:
           git commit -m "chore(data): update committed sitespeed extraction output"
           git push
 
+      - name: Capture commit SHA for deploy
+        id: capture_commit
+        shell: bash
+        run: |
+          echo "sha=$(git rev-parse HEAD)" >> "$GITHUB_OUTPUT"
+
       - name: Workflow contract checks
         shell: bash
         run: |
           vp test packages/extractor/tests/collect-workflow-contract.test.ts
+
+  deploy:
+    name: Build and deploy dashboard to Pages
+    runs-on: ubuntu-latest
+    needs: consolidate
+    permissions:
+      contents: read
+      pages: write
+      id-token: write
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - name: Checkout consolidated commit
+        uses: actions/checkout@v4
+        with:
+          ref: ${{ needs.consolidate.outputs.commit_sha }}
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Install dependencies
+        run: vp install
+
+      - name: Build static dashboard
+        run: vp run frontend#build
+
+      - name: Setup Pages
+        uses: actions/configure-pages@v5
+
+      - name: Upload Pages artifact
+        uses: actions/upload-pages-artifact@v3
+        with:
+          path: apps/frontend/build
+
+      - name: Deploy to GitHub Pages
+        id: deployment
+        uses: actions/deploy-pages@v4
