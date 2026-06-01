@@ -75,3 +75,79 @@ Completed acceptance criteria survey. Outcome:
 **Gap analysis:** `.squad/decisions/inbox/basher-issue-6.md` with safe defaults (urls.json template, workflow scaffold).
 
 **Orchestration logged:** `.squad/orchestration-log/2026-06-01T01-25-57Z-basher-issue-6.md`
+
+---
+
+## Issue #6 Implementation: Operating Inputs Encoded (2026-06-01)
+
+Implemented and committed the Issue #6 operating input defaults directly into repo workflow/config/docs.
+
+### Implemented Defaults
+
+- No direct SpeedCurve parity in MVP (explicitly disabled in config/workflow metadata)
+- Desktop profile fixed to `cable` + viewport `1366x768`
+- Daily run schedule fixed at `07:00 America/Los_Angeles` (UTC cron + LA-time gate)
+- Workflow artifact retention fixed at `14 days`
+- Seed QA catalog fixed to current 10-page committed `urls.json` (no invented URLs)
+
+### Files Added/Updated
+
+- `.github/workflows/collect.yml`
+- `config/operating-inputs.json`
+- `urls.json`
+- `docs/01__operating-inputs.md`
+- `.squad/decisions.md`
+
+### Learnings
+
+- To schedule a stable local-time run in GitHub Actions, dual UTC cron entries plus a timezone gate is the safest DST-compatible pattern.
+- Encoding issue-level operating inputs in both workflow and machine-readable config prevents drift between docs and execution.
+- Locking the seed URL catalog in a committed `urls.json` avoids accidental scope creep during early pipeline scaffold work.
+
+---
+
+## Issue #6 Batch Coordination: Operating Inputs (2026-06-01, 02:55:40Z)
+
+**Status:** ✅ IMPLEMENTATION COMPLETE + VALIDATED
+
+**Delivered:**
+
+1. **Operating Input Defaults Locked:**
+   - SpeedCurve parity disabled (`directParityInMvp=false`)
+   - Desktop profile: 1366x768 on cable throttle, no CPU throttle
+   - Daily schedule: 07:00 America/Los_Angeles (UTC-gated cron in workflow)
+   - Artifact retention: 14 days for detail/screenshots (GitHub raw artifacts 90-day default)
+   - Seed catalog: 10-page QA list in `urls.json` committed (no invented URLs)
+
+2. **Configuration & Documentation:**
+   - `config/operating-inputs.json` — Machine-readable operating input baseline
+   - `.github/workflows/collect.yml` — Workflow with profile defs + cron schedule + artifact retention policy
+   - `urls.json` — Committed QA catalog (immutable seed reference)
+   - `docs/01__operating-inputs.md` — Reference guide explaining rationale for each default
+   - Updated `README.md` + `docs/00__main-brief.md` with collection defaults
+
+3. **Validation:**
+   - ✅ `vp check` — All files formatted, no lint/type errors
+   - ✅ `vp test` — 92 tests passed
+   - ✅ `vp run -r build` — Build successful
+
+**Coordination Notes:**
+
+- Basher implemented config/workflow per merged user directives (6 decisions captured in inbox).
+- Livingston simultaneously implemented AI defaults + guardrails (separate track, no conflicts).
+- Rusty conducted implementation audit; identified 3 deferred items (desktop viewport confirmation, schedule HITL, model choice).
+- Linus shipped design system unification in parallel (no blockers).
+
+**Outstanding Issues (From Rusty Audit):**
+
+- Desktop viewport (1366x768) is documented in code but could be more explicit as TypeScript constant
+- Daily schedule (07:00 LA) confirmed in workflow but requires Diego HITL before full deployment
+- No usage logging/dashboard for budget enforcement yet (Livingston to add)
+
+**Next Steps:**
+
+- Confirm desktop viewport lock is sufficiently explicit in code (consider exporting from `packages/utils/src/config.ts`)
+- Await Diego's final confirmation on schedule (HITL already completed; just needs formal sign-off)
+- Implement usage logging job for budget monitoring (Livingston follow-up)
+
+**Orchestration Log:** `.squad/orchestration-log/2026-06-01T02:55:40Z-basher-issue-6-implement.md`
