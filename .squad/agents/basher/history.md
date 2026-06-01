@@ -151,3 +151,34 @@ Implemented and committed the Issue #6 operating input defaults directly into re
 - Implement usage logging job for budget monitoring (Livingston follow-up)
 
 **Orchestration Log:** `.squad/orchestration-log/2026-06-01T02:55:40Z-basher-issue-6-implement.md`
+
+---
+
+## Page Catalog Replacement: User Top Pages Locked (2026-06-01)
+
+- Replaced `urls.json` with Diego-provided 10-page top-page catalog as single source of truth.
+- Synchronized mirrored frontend fixture catalog (`apps/frontend/src/lib/data.ts`) to the same IDs, labels, groups, and URLs.
+- Updated fixture diagnostics mappings (`apps/frontend/src/lib/detail.ts`, `apps/frontend/src/lib/detail.test.ts`) so pending/unavailable review state references only valid current page IDs.
+- Updated mirrored catalog metadata/docs references (`config/operating-inputs.json`, `docs/01__operating-inputs.md`) to reflect top-page catalog wording.
+
+### Learnings
+
+- Catalog replacement must include fixture mirrors (not only `urls.json`) to avoid stale page IDs breaking tests and UI assumptions.
+- Keeping review/no-screenshot fixture maps keyed to current catalog IDs prevents orphaned diagnostics states after URL-list swaps.
+
+## Page Catalog Replacement (2026-06-01, 03:17:03Z)
+
+Completed replacement of committed 10-page `urls.json` with user-provided top-page catalog as the single canonical source of truth.
+
+**Action Taken:**
+
+- Replaced `urls.json` with exact provided entries
+- Synchronized frontend fixture catalog (`apps/frontend/src/lib/data.ts`) to same 10 entries
+- Updated fixture diagnostic maps (`apps/frontend/src/lib/detail.ts`, `apps/frontend/src/lib/detail.test.ts`) to reference only valid current page IDs
+- Updated metadata and docs references (`config/operating-inputs.json`, `docs/01__operating-inputs.md`)
+
+**Validation:** ✅ `vp check`, ✅ `vp test` (92), ✅ `vp build`
+
+**Key Learning:** Catalog replacement must include all mirrors (fixture catalog, diagnostic maps, metadata) to prevent stale page ID references breaking tests and UI assumptions.
+
+**Decision Merged:** `.squad/decisions.md` locked this decision as single source of truth.

@@ -1204,3 +1204,28 @@ Comprehensive coverage analysis of issue #6 acceptance criteria:
 - [ ] All user prompts answered: Issue #6 thread shows Diego's responses
 
 **Current Readiness:** ~75% unblocked; awaiting final three clarifications from user.
+
+## Page Catalog Replacement: User Top Pages Locked (2026-06-01)
+
+**Adopts:** Basher's decision to replace the committed 10-page `urls.json` with user-provided top-page catalog as the single source of truth for all page targets.
+
+**Scope Applied:**
+
+- `urls.json` replaced with exact provided entries (IDs, labels, URLs, groups)
+- Frontend fixture catalog (`apps/frontend/src/lib/data.ts`) synchronized to same 10 entries
+- Fixture diagnostic maps (`apps/frontend/src/lib/detail.ts`, `apps/frontend/src/lib/detail.test.ts`) updated to reference only current page IDs
+- Operating-input metadata and docs (`config/operating-inputs.json`, `docs/01__operating-inputs.md`) updated to reflect top-page catalog reference
+
+**Why:**
+Keeping a single canonical page catalog prevents drift between pipeline inputs (urls.json), frontend fixtures, and validation/test expectations. All mirrors must be kept in sync to avoid orphaned page ID references breaking tests and UI assumptions.
+
+**Key Learning:**
+Catalog replacement must include all mirrors (fixture catalog, diagnostic maps, metadata references), not only urls.json itself.
+
+**Validation:**
+
+- ✅ `vp check` — Pass
+- ✅ `vp test` — Pass (92 tests)
+- ✅ `vp run -r build` — Pass
+
+**Status:** ✅ Locked and deployed.
