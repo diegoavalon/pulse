@@ -97,6 +97,9 @@ jobs:
       - name: Install dependencies
         run: npx --yes -p vite-plus@latest vp install
 
+      - name: Build extractor dependencies
+        run: npx vp run utils#build
+
       - name: Build extractor package
         run: npx vp run extractor#build
 
