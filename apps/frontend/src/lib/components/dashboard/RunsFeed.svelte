@@ -30,7 +30,7 @@
   {#each runs as run, i (run.page.id)}
     {@const d = run.page[profile]}
     {@const lcpRating = rating("LCP", d.cwv.LCP)}
-    <div class="runrow" role="listitem">
+    <a class="runrow" href="/pages/{run.page.id}" role="listitem" style="text-decoration:none;color:inherit">
       <div class="runtime">
         <div class="rel">
           {#if i < 2}<span class="live" aria-label="Recent"></span>{/if}
@@ -79,7 +79,7 @@
           <Delta value={d.lcpDelta} lowerBetter={true} />
         </div>
       </div>
-    </div>
+    </a>
   {/each}
 
   <a class="view-all-link" href="/all-pages">
