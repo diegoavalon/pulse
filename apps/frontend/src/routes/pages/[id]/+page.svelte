@@ -11,6 +11,7 @@
   import TransferCard from "$lib/components/detail/TransferCard.svelte";
   import AdviceCard from "$lib/components/detail/AdviceCard.svelte";
   import ReviewCard from "$lib/components/detail/ReviewCard.svelte";
+  import TrendCard from "$lib/components/detail/TrendCard.svelte";
   import { detail } from "$lib/detail.js";
   import { PAGES, summary, scoreBand, rating, fmtMs, type Profile } from "$lib/data.js";
   import { themeStore, initTheme } from "$lib/theme.svelte.js";
@@ -173,6 +174,9 @@
           {/each}
         </div>
       {/if}
+
+      <!-- trend history -->
+      <TrendCard {det} />
 
       <!-- diagnostics grid -->
       <div class="dgrid">
