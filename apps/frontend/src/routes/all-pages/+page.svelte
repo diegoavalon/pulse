@@ -26,7 +26,7 @@
     onprofilechange={(p) => (profile = p)}
   />
 
-  <div class="canvas">
+  <div class="container">
     <AllPagesConsole {profile} theme={themeStore.value} />
   </div>
 </div>

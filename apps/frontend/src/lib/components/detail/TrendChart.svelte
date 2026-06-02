@@ -16,9 +16,19 @@
   let chart: Chart | null = null;
 
   // Get colors from CSS custom properties
+  // Read from .pd container, not :root, since variables are scoped to .pd
   const getColor = (varName: string) => {
     if (typeof window === "undefined") return "#000";
-    return getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
+    const pdContainer = document.querySelector('.pd');
+    if (!pdContainer) {
+      console.warn(`Cannot read CSS variable ${varName}: .pd container not found`);
+      return "#000";
+    }
+    const value = getComputedStyle(pdContainer).getPropertyValue(varName).trim();
+    if (!value) {
+      console.warn(`CSS variable ${varName} is empty or undefined`);
+    }
+    return value || "#000";
   };
 
   // Format value based on metric type
@@ -42,11 +52,15 @@
 
     if (!canvas) return;
 
+    // Extract brand colors from CSS custom properties
     const good = getColor("--good");
     const ni = getColor("--ni");
     const poor = getColor("--poor");
     const muted = getColor("--muted");
-    const surfaceElevated = getColor("--color-surface-elevated");
+    const surface = getColor("--surface");
+    const border = getColor("--border");
+    const ink = getColor("--ink");
+    const fontSans = getColor("--sans");
 
     // Determine line color based on latest value's rating
     const latestValue = data[data.length - 1];
@@ -72,11 +86,12 @@
             borderWidth: 2.5,
             tension: 0.3,
             fill: true,
-            pointBackgroundColor: surfaceElevated,
+            pointBackgroundColor: surface,
             pointBorderColor: lineColor,
             pointBorderWidth: 2,
             pointRadius: 3,
             pointHoverRadius: 5,
+            pointHoverBorderWidth: 2.5,
           },
         ],
       },
@@ -92,13 +107,24 @@
             display: false,
           },
           tooltip: {
-            backgroundColor: surfaceElevated,
+            backgroundColor: surface,
             titleColor: muted,
-            bodyColor: getColor("--color-ink"),
-            borderColor: getColor("--color-border"),
+            bodyColor: ink,
+            borderColor: border,
             borderWidth: 1,
             padding: 12,
             displayColors: false,
+            cornerRadius: 10,
+            titleFont: {
+              family: fontSans,
+              size: 13,
+              weight: '500',
+            },
+            bodyFont: {
+              family: fontSans,
+              size: 14,
+              weight: '400',
+            },
             callbacks: {
               title: (items) => labels[items[0].dataIndex],
               label: (item) => {
@@ -113,20 +139,40 @@
             display: true,
             grid: {
               display: false,
+              drawBorder: false,
+            },
+            border: {
+              display: false,
             },
             ticks: {
               color: muted,
               maxRotation: 0,
               autoSkipPadding: 20,
+              font: {
+                family: fontSans,
+                size: 13,
+                weight: '400',
+              },
             },
           },
           y: {
             display: true,
             grid: {
-              color: getColor("--color-border") + "40",
+              color: `${border}66`,
+              drawBorder: false,
+              lineWidth: 1,
+            },
+            border: {
+              display: false,
             },
             ticks: {
               color: muted,
+              padding: 8,
+              font: {
+                family: fontSans,
+                size: 13,
+                weight: '400',
+              },
               callback: (value) => formatValue(value as number),
             },
           },

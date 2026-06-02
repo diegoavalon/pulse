@@ -14,7 +14,14 @@
   import ReviewCard from "$lib/components/detail/ReviewCard.svelte";
   import TrendCard from "$lib/components/detail/TrendCard.svelte";
   import { detail } from "$lib/detail.js";
-  import { PAGES, summary, scoreBand, rating, fmtMs, type Profile } from "$lib/data.js";
+  import {
+    PAGES,
+    summary,
+    scoreBand,
+    rating,
+    fmtMs,
+    type Profile,
+  } from "$lib/data.js";
   import { themeStore, initTheme } from "$lib/theme.svelte.js";
 
   let profile = $state<Profile>("mobile");
@@ -41,7 +48,13 @@
   const METRICS = ["LCP", "CLS", "TBT", "FCP", "TTFB", "INP"] as const;
 
   function ratingLabel(r: string): string {
-    return r === "good" ? "Good" : r === "ni" ? "Needs work" : r === "poor" ? "Poor" : "No data";
+    return r === "good"
+      ? "Good"
+      : r === "ni"
+        ? "Needs work"
+        : r === "poor"
+          ? "Poor"
+          : "No data";
   }
 
   onMount(initTheme);
@@ -51,7 +64,8 @@
   <title>{det?.page.label ?? "Page"} · Pulse Vitals</title>
   <meta
     name="description"
-    content="Core Web Vitals detail — {det?.page.label ?? ''}, {profile} profile"
+    content="Core Web Vitals detail — {det?.page.label ??
+      ''}, {profile} profile"
   />
 </svelte:head>
 
@@ -64,15 +78,25 @@
   />
 
   {#if !det}
-    <div class="dwrap">
+    <div class="dwrap container">
       <div class="empty">Unknown page ID: {id}</div>
     </div>
   {:else}
-    <div class="dwrap">
+    <div class="dwrap container">
       <!-- breadcrumb + page switcher -->
       <div class="crumb">
         <a href={`${base}/all-pages`} class="back">
-          <svg width="15" height="15" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+          <svg
+            width="15"
+            height="15"
+            viewBox="0 0 24 24"
+            fill="none"
+            stroke="currentColor"
+            stroke-width="1.8"
+            stroke-linecap="round"
+            stroke-linejoin="round"
+            aria-hidden="true"
+          >
             <path d="M19 12H5" /><path d="M11 18l-6-6 6-6" />
           </svg>
           All Pages
@@ -111,9 +135,22 @@
             rel="noopener noreferrer"
           >
             {pagePath()}
-            <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" class="gi" aria-hidden="true">
+            <svg
+              width="13"
+              height="13"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="1.8"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              class="gi"
+              aria-hidden="true"
+            >
               <path d="M14 4h6v6" /><path d="M20 4l-8.5 8.5" />
-              <path d="M18 14v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4" />
+              <path
+                d="M18 14v4a2 2 0 0 1-2 2H6a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4"
+              />
             </svg>
           </a>
           <p class="dh-sum">
@@ -121,7 +158,17 @@
             {profile} pages —
             <a href={`${base}/all-pages`} class="ilink">
               see all in context
-              <svg width="13" height="13" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+              <svg
+                width="13"
+                height="13"
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                aria-hidden="true"
+              >
                 <path d="M5 12h14" /><path d="M13 6l6 6-6 6" />
               </svg>
             </a>
@@ -134,8 +181,22 @@
               aria-pressed={profile === "mobile"}
               onclick={() => (profile = "mobile")}
             >
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px" aria-hidden="true">
-                <rect x="7" y="2" width="10" height="20" rx="2.4" /><line x1="11" y1="18.5" x2="13" y2="18.5" />
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                style="width:14px;height:14px"
+                aria-hidden="true"
+              >
+                <rect x="7" y="2" width="10" height="20" rx="2.4" /><line
+                  x1="11"
+                  y1="18.5"
+                  x2="13"
+                  y2="18.5"
+                />
               </svg>
               Mobile
             </button>
@@ -143,8 +204,22 @@
               aria-pressed={profile === "desktop"}
               onclick={() => (profile = "desktop")}
             >
-              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" style="width:14px;height:14px" aria-hidden="true">
-                <rect x="2.5" y="4" width="19" height="12.5" rx="2" /><line x1="8.5" y1="20.5" x2="15.5" y2="20.5" /><line x1="12" y1="16.5" x2="12" y2="20.5" />
+              <svg
+                viewBox="0 0 24 24"
+                fill="none"
+                stroke="currentColor"
+                stroke-width="1.8"
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                style="width:14px;height:14px"
+                aria-hidden="true"
+              >
+                <rect x="2.5" y="4" width="19" height="12.5" rx="2" /><line
+                  x1="8.5"
+                  y1="20.5"
+                  x2="15.5"
+                  y2="20.5"
+                /><line x1="12" y1="16.5" x2="12" y2="20.5" />
               </svg>
               Desktop
             </button>
@@ -194,9 +269,16 @@
       </div>
 
       <div class="dfoot">
-        <span>sitespeed.io {det.page.sitespeedVersion ?? "41.2.0"} · {det.page.iterations ?? 3} iterations · median</span>
+        <span
+          >sitespeed.io {det.page.sitespeedVersion ?? "41.2.0"} · {det.page
+            .iterations ?? 3} iterations · median</span
+        >
         <span class="sep"></span>
-        <span>{profile === "mobile" ? "Moto G4 · 4G throttled" : "Desktop · cable"}</span>
+        <span
+          >{profile === "mobile"
+            ? "Moto G4 · 4G throttled"
+            : "Desktop · cable"}</span
+        >
         <span class="sep"></span>
         <span>Captured {new Date(det.run.when).toLocaleDateString()}</span>
       </div>

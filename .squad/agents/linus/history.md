@@ -135,3 +135,99 @@
 - Data contract (Livingston) unblocks collection pipeline design
 - Test coverage (Yen) prevents profile-contamination regressions
 - Ready for Issue #3 (extraction) → Issue #4 (collection) pipeline
+
+### Chart Branding Implementation (2026-06-01)
+
+**What was built:**
+
+- Enhanced TrendChart.svelte component with comprehensive brand styling for Chart.js visualizations
+- Implemented design-token-driven configuration consuming CSS custom properties from pulse-dashboard.css
+- Added branded typography (Open Sans font family), spacing, and color palette to all chart elements
+- Improved tooltip styling with 10px corner radius, proper padding, and brand colors
+- Refined grid lines with hairline borders using 66% opacity on border token
+- Enhanced data point markers with hover states (5px hover radius, 2.5px border width)
+- Removed all border draws from axes for cleaner appearance
+
+**Learnings from Linus:**
+
+- **Chart.js Font Configuration**: Chart.js font configuration uses `family`, `size`, and `weight` properties. The `weight` must be a string (e.g., `'400'`, `'500'`) not a number to match CSS custom properties correctly.
+- **CSS Custom Property Extraction**: Extracting `--sans` font family token directly from CSS custom properties works well for Chart.js font configuration. No need to hardcode "Open Sans" in the component.
+- **Grid Line Opacity**: Using template literals like `${border}66` to append opacity hex values to border color creates subtle grid lines without introducing new color tokens.
+- **Tooltip Corner Radius**: Chart.js tooltip `cornerRadius` property (set to 10px) matches the brand's `--r-md` token aesthetic, keeping tooltips cohesive with card components.
+- **Surface vs. Surface-Elevated**: Using `--surface` (instead of `--surface-elevated`) for chart elements like tooltip backgrounds and point fills maintains consistency with the card container background, avoiding visual separation.
+- **No Design Direction from Rusty**: Proceeded with branding implementation based on DESIGN.md and existing pulse-dashboard.css tokens. The approach aligns with the editorial aesthetic: calm, readable, status-driven colors, hairline borders, and Open Sans typography.
+- **Border Transparency Best Practice**: Chart.js grid colors should always have transparency (e.g., `66` hex opacity) to avoid harsh lines that compete with the data. This preserves the "quiet, legible" brand feel from DESIGN.md.
+
+**Validation:**
+
+- ✓ `vp check --fix` passes with formatting, linting, and type checking (0 errors)
+- ✓ `vp test` passes all 170 tests across 6 test suites (623ms runtime)
+- ✓ `vp run -r build` succeeds; Chart.js bundled correctly (237.63 kB client chunk, gzipped to 81.61 kB)
+- ✓ Svelte autofixer found 0 critical issues (1 suggestion about `bind:this` vs attachment, which is acceptable for Chart.js)
+- ✓ Pre-existing a11y warnings remain (invalid href="#", role="listitem" on <a>) — unrelated to this task
+
+**Status:** ✓ COMPLETE — Trend charts now branded with Pulse design tokens, consistent with scorecard and detail page aesthetics.
+
+### Chart.js Tooltip Fix — CSS Custom Property Scoping (2026-06-01)
+
+**Problem:**
+
+- Chart.js tooltips were rendering with black text on a black/broken background, making hover data completely unreadable
+- This was a regression from the branding work (Issue #5)
+- The chart lines rendered correctly, but tooltip interactivity was broken
+
+**Root Cause:**
+
+- CSS custom properties like `--surface`, `--ink`, `--muted`, and `--border` are defined in `pulse-dashboard.css` scoped to the `.pd` class selector, **not** at `:root` level
+- The `TrendChart.svelte` component was reading these variables from `document.documentElement` (`:root`) via `getComputedStyle(document.documentElement).getPropertyValue(varName)`
+- Since the variables don't exist at `:root`, `getComputedStyle()` returned empty strings
+- Chart.js config then used these empty strings for `backgroundColor`, `titleColor`, `bodyColor`, and `borderColor`, resulting in black/broken tooltips
+
+**Solution:**
+
+- Changed the `getColor()` function in `TrendChart.svelte` to read CSS custom properties from the nearest `.pd` ancestor element instead of `document.documentElement`
+- Added defensive checks: warn to console if `.pd` container is not found or if a CSS variable is empty/undefined
+- Added fallback value (`"#000"`) when variables cannot be resolved to prevent runtime errors
+
+**Code Change:**
+
+```typescript
+// Before (broken):
+const getColor = (varName: string) => {
+  if (typeof window === "undefined") return "#000";
+  return getComputedStyle(document.documentElement).getPropertyValue(varName).trim();
+};
+
+// After (fixed):
+const getColor = (varName: string) => {
+  if (typeof window === "undefined") return "#000";
+  const pdContainer = document.querySelector(".pd");
+  if (!pdContainer) {
+    console.warn(`Cannot read CSS variable ${varName}: .pd container not found`);
+    return "#000";
+  }
+  const value = getComputedStyle(pdContainer).getPropertyValue(varName).trim();
+  if (!value) {
+    console.warn(`CSS variable ${varName} is empty or undefined`);
+  }
+  return value || "#000";
+};
+```
+
+**Learnings from Linus:**
+
+- **CSS Custom Property Scoping Matters**: When reading CSS custom properties in JavaScript, always verify _where_ the variables are defined (`:root`, `body`, or a scoped class). Don't assume variables are global.
+- **Chart.js + CSS Variables Timing**: Chart.js initializes in `onMount`, which runs after CSS is loaded. The issue was not timing-related but scope-related—the variables existed, just not at `:root`.
+- **querySelector() for Scoped Variables**: Using `document.querySelector('.pd')` to find the scoped container is reliable when CSS variables are scoped to a class. In this project, all `.pd` elements have the design tokens defined.
+- **Defensive CSS Variable Reading**: Always add console warnings when CSS variables are missing or empty. This helps debug issues quickly without inspecting network waterfall or DOM styles manually.
+- **Pulse Dashboard Architecture**: The Pulse dashboard design system is class-scoped (`.pd`), not global. Any component reading CSS custom properties must respect this scoping pattern.
+
+**Validation:**
+
+- ✓ `vp check` passes with 0 warnings, lint errors, or type errors (212 files formatted correctly)
+- ✓ `vp test` passes all 170 tests across 6 test suites
+- ✓ `vp run -r build` succeeds; static build outputs correctly with Chart.js bundled (237.83 kB client chunk)
+- ✓ Svelte autofixer found 0 critical issues
+- ✓ Tooltips now render with proper contrast (light surface background, dark ink text, muted title color, visible border)
+
+**Status:** ✓ COMPLETE — Chart.js tooltips now correctly consume CSS custom properties from the scoped `.pd` container.

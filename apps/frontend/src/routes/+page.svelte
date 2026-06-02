@@ -35,12 +35,12 @@
     onprofilechange={(p) => (profile = p)}
   />
 
-  <div class="canvas">
+  <div class="container py-6">
     <HeroSection {profile} summary={s} {worst} />
     <FeatureCard {profile} page={worst} />
     <RunsFeed {runs} {profile} totalPages={PAGES.length} />
 
-    <div class="foot">
+    <div class="foot py-4 text-center">
       <span>sitespeed.io 41.2.0</span>
       <span class="sep"></span>
       <span>3 iterations · median</span>

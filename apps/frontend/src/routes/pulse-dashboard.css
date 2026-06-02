@@ -263,17 +263,15 @@
 /* ============================================================ FLOATING NAV */
 .pnav {
   position: sticky;
-  top: 16px;
+  top: 0;
   z-index: 20;
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 24px;
-  margin: 22px auto 0;
-  padding: 8px 8px 8px 18px;
+  padding: 1rem 0;
   background: var(--surface);
-  border: 1px solid var(--border);
-  border-radius: 999px;
+  border-bottom: 1px solid var(--border);
   box-shadow: var(--shadow-md);
 }
 .pd .pnav .brand {
@@ -709,7 +707,9 @@
 
 /* ============================================================ ALL PAGES CONSOLE */
 .container {
-  max-width: 1340px;
+  max-width: 1600px;
+  margin: 0 auto;
+  padding: 0 20px;
 }
 
 .pd .con-header {
@@ -978,15 +978,6 @@
 .pd .wbar span {
   height: 100%;
   display: block;
-}
-
-/* ============================================================ DETAIL VIEW */
-/* Scoped to .pd.detailview (applied alongside .pd on the root div) */
-
-.pd.detailview .dwrap {
-  max-width: 1240px;
-  margin: 0 auto;
-  padding: 8px 24px 70px;
 }
 
 /* breadcrumb + page switcher */
