@@ -5,6 +5,7 @@
 	import '@fontsource-variable/open-sans'
 
 	import './layout.css';
+	import './theme.css';
 	import './pulse-dashboard.css';
 	import favicon from '$lib/assets/favicon.svg';
 
